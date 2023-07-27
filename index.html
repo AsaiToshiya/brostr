@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nostr Browser</title>
+  </head>
+  <body>
+    nostr:
+    <input
+      id="nip19"
+      type="text"
+      size="50"
+      value="nevent1qqspalqncmlm4asvqdrm47yldm926ghhf2lcy9jlek64aalgej52t9ck43ggf"
+    />
+    <button onclick="handleClick()">Go</button>
+    <div>
+      <iframe id="iframe"></iframe>
+    </div>
+
+    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
+    <script>
+      const RELAYS = [
+        "wss://nos.lol",
+        "wss://nostr-pub.wellorder.net",
+        "wss://nostr.bitcoiner.social",
+        "wss://nostr.mom",
+        "wss://nostr.oxtr.dev",
+        "wss://relay-jp.nostr.wirednet.jp",
+        "wss://relay.damus.io",
+        "wss://relay.nostr.bg",
+      ];
+
+      const handleClick = async () => {
+        const { id } = window.NostrTools.nip19.decode(nip19.value).data;
+        const pool = new window.NostrTools.SimplePool();
+        const event = await pool.get(RELAYS, {
+          ids: [id],
+        });
+        iframe.srcdoc = event.content;
+      };
+    </script>
+  </body>
+</html>
