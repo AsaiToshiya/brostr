@@ -44,7 +44,10 @@
         const event = await pool.get(RELAYS, {
           ids: [id],
         });
-        iframe.srcdoc = event.content;
+        iframe.srcdoc =
+          event.kind == 5392
+            ? event.content
+            : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
       };
     </script>
   </body>
