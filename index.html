@@ -1,20 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html style="height: 100%; margin: 0; padding: 0; width: 100%">
   <head>
     <title>Nostr Browser</title>
   </head>
-  <body>
-    nostr:
-    <input
-      id="nip19"
-      type="text"
-      size="50"
-      value="nevent1qqspalqncmlm4asvqdrm47yldm926ghhf2lcy9jlek64aalgej52t9ck43ggf"
-    />
-    <button onclick="handleClick()">Go</button>
+  <body
+    style="
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    "
+  >
     <div>
-      <iframe id="iframe"></iframe>
+      nostr:
+      <input
+        id="nip19"
+        type="text"
+        size="50"
+        value="nevent1qqspalqncmlm4asvqdrm47yldm926ghhf2lcy9jlek64aalgej52t9ck43ggf"
+      />
+      <button onclick="handleClick()">Go</button>
     </div>
+    <iframe id="iframe" style="flex-grow: 1; margin: 0; padding: 0"></iframe>
 
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
