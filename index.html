@@ -38,8 +38,23 @@
         "wss://relay.nostr.bg",
       ];
 
-      const handleClick = async () => {
-        const { id } = window.NostrTools.nip19.decode(nip19.value).data;
+      const onload = () => {
+        iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
+          a.href = a.href.replace(/^nostr:/, "");
+        });
+        iframe.srcdoc = new XMLSerializer().serializeToString(
+          iframe.contentWindow.document
+        );
+        iframe.onload = () => {
+          iframe.onload = () => {
+            const path = iframe.contentWindow.location.pathname;
+            (async () => await updateContent(path.substring(1)))();
+          };
+        };
+      };
+
+      const updateContent = async (nip19) => {
+        const { id } = window.NostrTools.nip19.decode(nip19).data;
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(RELAYS, {
           ids: [id],
@@ -48,7 +63,10 @@
           event.kind == 5392
             ? event.content
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
+        iframe.onload = onload;
       };
+
+      const handleClick = async () => await updateContent(nip19.value);
     </script>
   </body>
 </html>
