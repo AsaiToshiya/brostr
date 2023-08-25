@@ -38,10 +38,32 @@
         "wss://relay.nostr.bg",
       ];
 
-      const onload = () => {
+      const onload = async () => {
         iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
           a.href = a.href.replace(/^nostr:/, "");
         });
+
+        await Promise.all(
+          [...iframe.contentWindow.document.querySelectorAll("script")].map(
+            async (script) => {
+              const nip19 = script.src;
+              const { id } = window.NostrTools.nip19.decode(
+                nip19.replace(/^nostr:/, "")
+              ).data;
+
+              const pool = new window.NostrTools.SimplePool();
+              const event = await pool.get(RELAYS, {
+                ids: [id],
+              });
+              await pool.close(RELAYS);
+
+              script.src =
+                "data:text/javascript;base64," +
+                btoa(unescape(encodeURIComponent(event.content)));
+            }
+          )
+        );
+
         iframe.srcdoc = new XMLSerializer().serializeToString(
           iframe.contentWindow.document
         );
