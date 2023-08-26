@@ -64,6 +64,27 @@
           )
         );
 
+        await Promise.all(
+          [...iframe.contentWindow.document.querySelectorAll("link")].map(
+            async (link) => {
+              const nip19 = link.href;
+              const { id } = window.NostrTools.nip19.decode(
+                nip19.replace(/^nostr:/, "")
+              ).data;
+
+              const pool = new window.NostrTools.SimplePool();
+              const event = await pool.get(RELAYS, {
+                ids: [id],
+              });
+              await pool.close(RELAYS);
+
+              link.href =
+                "data:text/css;base64," +
+                btoa(unescape(encodeURIComponent(event.content)));
+            }
+          )
+        );
+
         iframe.srcdoc = new XMLSerializer().serializeToString(
           iframe.contentWindow.document
         );
