@@ -44,8 +44,9 @@
         mimeType
       ) => {
         await Promise.all(
-          [...iframe.contentWindow.document.querySelectorAll(tagName)].map(
-            async (el) => {
+          [...iframe.contentWindow.document.querySelectorAll(tagName)]
+            .filter((el) => el[attributeName].startsWith("nostr:"))
+            .map(async (el) => {
               const nip19 = el[attributeName];
               const { id } = window.NostrTools.nip19.decode(
                 nip19.replace(/^nostr:/, "")
@@ -60,8 +61,7 @@
               el[attributeName] =
                 `data:${mimeType};base64,` +
                 btoa(unescape(encodeURIComponent(event.content)));
-            }
-          )
+            })
         );
       };
 
@@ -75,8 +75,9 @@
         await convertNip19ToDataUrl("link", "href", "text/css");
 
         await Promise.all(
-          [...iframe.contentWindow.document.querySelectorAll("img")].map(
-            async (img) => {
+          [...iframe.contentWindow.document.querySelectorAll("img")]
+            .filter((img) => img.src.startsWith("nostr:"))
+            .map(async (img) => {
               const nip19 = img.src;
               const { id } = window.NostrTools.nip19.decode(
                 nip19.replace(/^nostr:/, "")
@@ -91,8 +92,7 @@
               const typeTag = event.tags.find((tag) => tag[0] == "type");
               typeTag &&
                 (img.src = `data:${typeTag[1]};base64,${event.content}`);
-            }
-          )
+            })
         );
 
         iframe.srcdoc = new XMLSerializer().serializeToString(
