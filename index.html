@@ -44,24 +44,26 @@
         mimeType
       ) => {
         await Promise.all(
-          [...iframe.contentWindow.document.querySelectorAll(tagName)]
-            .filter((el) => el[attributeName].startsWith("nostr:"))
-            .map(async (el) => {
-              const nip19 = el[attributeName];
-              const { id } = window.NostrTools.nip19.decode(
-                nip19.replace(/^nostr:/, "")
-              ).data;
+          [
+            ...iframe.contentWindow.document.querySelectorAll(
+              `${tagName}[src^='nostr:']`
+            ),
+          ].map(async (el) => {
+            const nip19 = el[attributeName];
+            const { id } = window.NostrTools.nip19.decode(
+              nip19.replace(/^nostr:/, "")
+            ).data;
 
-              const pool = new window.NostrTools.SimplePool();
-              const event = await pool.get(RELAYS, {
-                ids: [id],
-              });
-              await pool.close(RELAYS);
+            const pool = new window.NostrTools.SimplePool();
+            const event = await pool.get(RELAYS, {
+              ids: [id],
+            });
+            await pool.close(RELAYS);
 
-              el[attributeName] =
-                `data:${mimeType};base64,` +
-                btoa(unescape(encodeURIComponent(event.content)));
-            })
+            el[attributeName] =
+              `data:${mimeType};base64,` +
+              btoa(unescape(encodeURIComponent(event.content)));
+          })
         );
       };
 
@@ -75,7 +77,11 @@
         await convertNip19ToDataUrl("link", "href", "text/css");
 
         await Promise.all(
-          [...iframe.contentWindow.document.querySelectorAll("img")]
+          [
+            ...iframe.contentWindow.document.querySelectorAll(
+              "img[src^='nostr:']"
+            ),
+          ]
             .filter((img) => img.src.startsWith("nostr:"))
             .map(async (img) => {
               const nip19 = img.src;
