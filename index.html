@@ -81,24 +81,21 @@
             ...iframe.contentWindow.document.querySelectorAll(
               "img[src^='nostr:']"
             ),
-          ]
-            .filter((img) => img.src.startsWith("nostr:"))
-            .map(async (img) => {
-              const nip19 = img.src;
-              const { id } = window.NostrTools.nip19.decode(
-                nip19.replace(/^nostr:/, "")
-              ).data;
+          ].map(async (img) => {
+            const nip19 = img.src;
+            const { id } = window.NostrTools.nip19.decode(
+              nip19.replace(/^nostr:/, "")
+            ).data;
 
-              const pool = new window.NostrTools.SimplePool();
-              const event = await pool.get(RELAYS, {
-                ids: [id],
-              });
-              await pool.close(RELAYS);
+            const pool = new window.NostrTools.SimplePool();
+            const event = await pool.get(RELAYS, {
+              ids: [id],
+            });
+            await pool.close(RELAYS);
 
-              const typeTag = event.tags.find((tag) => tag[0] == "type");
-              typeTag &&
-                (img.src = `data:${typeTag[1]};base64,${event.content}`);
-            })
+            const typeTag = event.tags.find((tag) => tag[0] == "type");
+            typeTag && (img.src = `data:${typeTag[1]};base64,${event.content}`);
+          })
         );
 
         iframe.srcdoc = new XMLSerializer().serializeToString(
