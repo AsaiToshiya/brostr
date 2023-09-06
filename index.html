@@ -38,33 +38,67 @@
         "wss://relay.nostr.bg",
       ];
 
-      const convertNip19ToDataUrl = async (
+      const convertNip19ToDataUrl = (
         tagName,
         attributeName,
-        mimeType
+        mimeType,
+        events
       ) => {
-        await Promise.all(
-          [
+        [
+          ...iframe.contentWindow.document.querySelectorAll(
+            `${tagName}[${attributeName}^='nostr:']`
+          ),
+        ].map(async (el) => {
+          const nip19 = el[attributeName];
+
+          const event = events[nip19];
+
+          el[attributeName] =
+            `data:${mimeType};base64,` +
+            btoa(unescape(encodeURIComponent(event.content)));
+        });
+      };
+
+      // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
+      const fetchResourceEvents = async () => {
+        const nip21s = [
+          ...[
             ...iframe.contentWindow.document.querySelectorAll(
-              `${tagName}[src^='nostr:']`
+              "script[src^='nostr:']"
             ),
-          ].map(async (el) => {
-            const nip19 = el[attributeName];
-            const { id } = window.NostrTools.nip19.decode(
-              nip19.replace(/^nostr:/, "")
-            ).data;
+          ].map((script) => script.src),
+          ...[
+            ...iframe.contentWindow.document.querySelectorAll(
+              "link[href^='nostr:']"
+            ),
+          ].map((link) => link.href),
+          ...[
+            ...iframe.contentWindow.document.querySelectorAll(
+              "img[src^='nostr:']"
+            ),
+          ].map((img) => img.src),
+        ];
 
-            const pool = new window.NostrTools.SimplePool();
-            const event = await pool.get(RELAYS, {
-              ids: [id],
-            });
-            await pool.close(RELAYS);
+        const pool = new window.NostrTools.SimplePool();
+        const ids = nip21s.map((nip19) => {
+          const { id } = window.NostrTools.nip19.decode(
+            nip19.replace(/^nostr:/, "")
+          ).data;
+          return id;
+        });
+        const events = await pool.list(RELAYS, [
+          {
+            ids,
+          },
+        ]);
+        await pool.close(RELAYS);
 
-            el[attributeName] =
-              `data:${mimeType};base64,` +
-              btoa(unescape(encodeURIComponent(event.content)));
-          })
-        );
+        return nip21s.reduce((acc, obj) => {
+          const { id } = window.NostrTools.nip19.decode(
+            obj.replace(/^nostr:/, "")
+          ).data;
+          return { ...acc, [obj]: events.find((event) => event.id == id) };
+        }, {});
       };
 
       const onload = async () => {
@@ -72,31 +106,24 @@
           a.href = a.href.replace(/^nostr:/, "");
         });
 
-        await convertNip19ToDataUrl("script", "src", "text/javascript");
+        const events = await fetchResourceEvents();
 
-        await convertNip19ToDataUrl("link", "href", "text/css");
+        convertNip19ToDataUrl("script", "src", "text/javascript", events);
 
-        await Promise.all(
-          [
-            ...iframe.contentWindow.document.querySelectorAll(
-              "img[src^='nostr:']"
-            ),
-          ].map(async (img) => {
-            const nip19 = img.src;
-            const { id } = window.NostrTools.nip19.decode(
-              nip19.replace(/^nostr:/, "")
-            ).data;
+        convertNip19ToDataUrl("link", "href", "text/css", events);
 
-            const pool = new window.NostrTools.SimplePool();
-            const event = await pool.get(RELAYS, {
-              ids: [id],
-            });
-            await pool.close(RELAYS);
+        [
+          ...iframe.contentWindow.document.querySelectorAll(
+            "img[src^='nostr:']"
+          ),
+        ].map(async (img) => {
+          const nip19 = img.src;
 
-            const typeTag = event.tags.find((tag) => tag[0] == "type");
-            typeTag && (img.src = `data:${typeTag[1]};base64,${event.content}`);
-          })
-        );
+          const event = events[nip19];
+
+          const typeTag = event.tags.find((tag) => tag[0] == "type");
+          typeTag && (img.src = `data:${typeTag[1]};base64,${event.content}`);
+        });
 
         iframe.srcdoc = new XMLSerializer().serializeToString(
           iframe.contentWindow.document
