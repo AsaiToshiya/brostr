@@ -48,7 +48,7 @@
           ...iframe.contentWindow.document.querySelectorAll(
             `${tagName}[${attributeName}^='nostr:']`
           ),
-        ].map(async (el) => {
+        ].map((el) => {
           const nip19 = el[attributeName];
 
           const event = events[nip19];
@@ -116,7 +116,7 @@
           ...iframe.contentWindow.document.querySelectorAll(
             "img[src^='nostr:']"
           ),
-        ].map(async (img) => {
+        ].map((img) => {
           const nip19 = img.src;
 
           const event = events[nip19];
