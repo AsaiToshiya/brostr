@@ -14,7 +14,6 @@
     "
   >
     <div>
-      nostr:
       <input
         id="nip19"
         type="text"
@@ -137,7 +136,9 @@
       };
 
       const updateContent = async (nip19) => {
-        const { id } = window.NostrTools.nip19.decode(nip19).data;
+        const { id } = window.NostrTools.nip19.decode(
+          nip19.replace(/^nostr:/, "")
+        ).data;
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(RELAYS, {
           ids: [id],
