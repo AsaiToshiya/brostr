@@ -120,7 +120,7 @@
 
           const event = events[nip19];
 
-          const typeTag = event.tags.find((tag) => tag[0] == "type");
+          const typeTag = event?.tags.find((tag) => tag[0] == "type");
           typeTag && (img.src = `data:${typeTag[1]};base64,${event.content}`);
         });
 
