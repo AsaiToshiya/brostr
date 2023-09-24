@@ -130,7 +130,8 @@
         iframe.onload = () => {
           iframe.onload = () => {
             const path = iframe.contentWindow.location.pathname;
-            (async () => await updateContent(path.substring(1)))();
+            (async () =>
+              await updateContent(path.substring(path.lastIndexOf("/") + 1)))();
           };
         };
       };
