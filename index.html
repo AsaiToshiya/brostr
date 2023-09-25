@@ -130,8 +130,9 @@
         iframe.onload = () => {
           iframe.onload = () => {
             const path = iframe.contentWindow.location.pathname;
-            (async () =>
-              await updateContent(path.substring(path.lastIndexOf("/") + 1)))();
+            const nip19 = path.substring(path.lastIndexOf("/") + 1);
+            document.querySelector("#nip19").value = nip19;
+            (async () => await updateContent(nip19))();
           };
         };
       };
