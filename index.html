@@ -14,6 +14,12 @@
     "
   >
     <div>
+      <button id="back" onclick="handleBackClick()" disabled="true">
+        Back
+      </button>
+      <button id="forward" onclick="handleForwardClick()" disabled="true">
+        Forward
+      </button>
       <input
         id="nip19"
         type="text"
@@ -132,12 +138,17 @@
             const path = iframe.contentWindow.location.pathname;
             const nip19 = path.substring(path.lastIndexOf("/") + 1);
             document.querySelector("#nip19").value = nip19;
+            history = [...history.slice(0, ++historyIndex), nip19];
             (async () => await updateContent(nip19))();
           };
         };
       };
 
       const updateContent = async (nip19) => {
+        back.disabled = historyIndex <= 0;
+        forward.disabled = historyIndex >= history.length - 1;
+        document.querySelector("#nip19").value = nip19;
+
         const { id } = window.NostrTools.nip19.decode(
           nip19.replace(/^nostr:/, "")
         ).data;
@@ -152,7 +163,28 @@
         iframe.onload = onload;
       };
 
-      const handleClick = async () => await updateContent(nip19.value);
+      const handleBackClick = async () => {
+        const nip19 = history[--historyIndex];
+        await updateContent(nip19);
+      };
+
+      const handleClick = async () => {
+        history =
+          history[historyIndex]?.replace(/^nostr:/, "") ==
+          nip19.value.replace(/^nostr:/, "")
+            ? history
+            : [...history.slice(0, ++historyIndex), nip19.value];
+
+        await updateContent(nip19.value);
+      };
+
+      const handleForwardClick = async () => {
+        const nip19 = history[++historyIndex];
+        await updateContent(nip19);
+      };
+
+      let history = [];
+      let historyIndex = -1;
     </script>
   </body>
 </html>
