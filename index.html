@@ -169,6 +169,7 @@
       };
 
       const handleClick = async () => {
+        const nip19 = document.querySelector("#nip19");
         history =
           history[historyIndex]?.replace(/^nostr:/, "") ==
           nip19.value.replace(/^nostr:/, "")
@@ -185,6 +186,9 @@
 
       let history = [];
       let historyIndex = -1;
+
+      const nip19 = new URLSearchParams(location.search).get("nip19");
+      nip19 && (async () => await updateContent(nip19))();
     </script>
   </body>
 </html>
