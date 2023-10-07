@@ -128,10 +128,6 @@
       };
 
       const onload = async () => {
-        iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
-          a.href = a.href.replace(/^nostr:/, "");
-        });
-
         const events = await fetchResourceEvents();
 
         convertNip19ToDataUrl("script", "src", "text/javascript", events);
@@ -155,13 +151,15 @@
           iframe.contentWindow.document
         );
         iframe.onload = () => {
-          iframe.onload = () => {
-            const path = iframe.contentWindow.location.pathname;
-            const nip19 = path.substring(path.lastIndexOf("/") + 1);
-            document.querySelector("#nip19").value = nip19;
-            history = [...history.slice(0, ++historyIndex), nip19];
-            (async () => await updateContent(nip19))();
-          };
+          iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
+            a.href.startsWith("nostr:") &&
+              a.addEventListener("click", (event) => {
+                const nip19 = a.href.replace(/^nostr:/, "");
+                document.querySelector("#nip19").value = nip19;
+                (async () => await updateContent(nip19))();
+                event.preventDefault();
+              });
+          });
         };
       };
 
