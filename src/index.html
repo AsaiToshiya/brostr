@@ -156,6 +156,7 @@
               a.addEventListener("click", (event) => {
                 const nip19 = a.href.replace(/^nostr:/, "");
                 document.querySelector("#nip19").value = nip19;
+                history = [...history.slice(0, ++historyIndex), nip19];
                 (async () => await updateContent(nip19))();
                 event.preventDefault();
               });
