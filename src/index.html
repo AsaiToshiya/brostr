@@ -176,9 +176,17 @@
         const event = await pool.get(RELAYS, {
           ids: [id],
         });
+        const kind =
+          event.kind == 30036
+            ? parseInt(event.tags.find((tag) => tag[0] == "k")[1])
+            : event.kind;
+        const content =
+          event.kind == 30036
+            ? JSON.parse(event.content).content
+            : event.content;
         iframe.srcdoc =
-          event.kind == 5392
-            ? event.content
+          kind == 5392
+            ? content
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
         iframe.onload = onload;
       };
