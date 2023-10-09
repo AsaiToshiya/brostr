@@ -64,7 +64,7 @@
         "wss://r.hostr.cc",
       ];
 
-      const convertNip19ToDataUrl = (
+      const convertNip21ToDataUrl = (
         tagName,
         attributeName,
         mimeType,
@@ -143,9 +143,9 @@
       const onload = async () => {
         const events = await fetchResourceEvents();
 
-        convertNip19ToDataUrl("script", "src", "text/javascript", events);
+        convertNip21ToDataUrl("script", "src", "text/javascript", events);
 
-        convertNip19ToDataUrl("link", "href", "text/css", events);
+        convertNip21ToDataUrl("link", "href", "text/css", events);
 
         [
           ...iframe.contentWindow.document.querySelectorAll(
