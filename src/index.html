@@ -106,24 +106,37 @@
         ];
 
         const pool = new window.NostrTools.SimplePool();
-        const ids = nip21s.map((nip19) => {
-          const { id } = window.NostrTools.nip19.decode(
+        const filters = nip21s.map((nip19) => {
+          const { type, data } = window.NostrTools.nip19.decode(
             nip19.replace(/^nostr:/, "")
-          ).data;
-          return id;
+          );
+          return type === "nevent"
+            ? {
+                ids: [data.id],
+              }
+            : {
+                kinds: [data.kind],
+                authors: [data.pubkey],
+                "#d": [data.identifier],
+              };
         });
-        const events = await pool.list(RELAYS, [
-          {
-            ids,
-          },
-        ]);
+        const events = await pool.list(RELAYS, filters);
         await pool.close(RELAYS);
 
         return nip21s.reduce((acc, obj) => {
-          const { id } = window.NostrTools.nip19.decode(
+          const { type, data } = window.NostrTools.nip19.decode(
             obj.replace(/^nostr:/, "")
-          ).data;
-          return { ...acc, [obj]: events.find((event) => event.id == id) };
+          );
+          return {
+            ...acc,
+            [obj]: events.find((event) =>
+              type === "nevent"
+                ? event.id == data.id
+                : event.kind == data.kind &&
+                  event.pubkey == data.pubkey &&
+                  event.tags.find((tag) => tag[0] == "d")[1] == data.identifier
+            ),
+          };
         }, {});
       };
 
@@ -169,13 +182,21 @@
         forward.disabled = historyIndex >= history.length - 1;
         document.querySelector("#nip19").value = nip19;
 
-        const { id } = window.NostrTools.nip19.decode(
+        const { type, data } = window.NostrTools.nip19.decode(
           nip19.replace(/^nostr:/, "")
-        ).data;
+        );
+        const filter =
+          type === "nevent"
+            ? {
+                ids: [data.id],
+              }
+            : {
+                kinds: [data.kind],
+                authors: [data.pubkey],
+                "#d": [data.identifier],
+              };
         const pool = new window.NostrTools.SimplePool();
-        const event = await pool.get(RELAYS, {
-          ids: [id],
-        });
+        const event = await pool.get(RELAYS, filter);
         const kind =
           event.kind == 30036
             ? parseInt(event.tags.find((tag) => tag[0] == "k")[1])
@@ -185,7 +206,7 @@
             ? JSON.parse(event.content).content
             : event.content;
         iframe.srcdoc =
-          kind == 5392
+          kind == 5392 || kind == 35392
             ? content
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
         iframe.onload = onload;
