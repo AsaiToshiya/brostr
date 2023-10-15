@@ -120,8 +120,8 @@
                 "#d": [data.identifier],
               };
         });
-        const events = await pool.list(RELAYS, filters);
-        await pool.close(RELAYS);
+        const events = await pool.list(relays, filters);
+        await pool.close(relays);
 
         return nip21s.reduce((acc, obj) => {
           const { type, data } = window.NostrTools.nip19.decode(
@@ -196,7 +196,7 @@
                 "#d": [data.identifier],
               };
         const pool = new window.NostrTools.SimplePool();
-        const event = await pool.get(RELAYS, filter);
+        const event = await pool.get(relays, filter);
         const kind =
           event.kind == 30036
             ? parseInt(event.tags.find((tag) => tag[0] == "k")[1])
