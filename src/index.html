@@ -41,7 +41,7 @@
         Forward</button
       >&nbsp;
       <input
-        id="nip19"
+        id="uri"
         type="text"
         size="50"
         value="nevent1qqsd2svzwvnmtrquga3a08tntr7lp6w4me755z8ym284jtm7xf9wf9gc8ywjf"
@@ -168,7 +168,7 @@
             a.href.startsWith("nostr:") &&
               a.addEventListener("click", (event) => {
                 const nip19 = a.href.replace(/^nostr:/, "");
-                document.querySelector("#nip19").value = nip19;
+                uri.value = nip19;
                 history = [...history.slice(0, ++historyIndex), nip19];
                 (async () => await updateContent(nip19))();
                 event.preventDefault();
@@ -180,7 +180,7 @@
       const updateContent = async (nip19) => {
         back.disabled = historyIndex <= 0;
         forward.disabled = historyIndex >= history.length - 1;
-        document.querySelector("#nip19").value = nip19;
+        uri.value = nip19;
 
         const { type, data } = window.NostrTools.nip19.decode(
           nip19.replace(/^nostr:/, "")
@@ -218,7 +218,7 @@
       };
 
       const handleClick = async () => {
-        const nip19 = document.querySelector("#nip19");
+        const nip19 = uri;
         history =
           history[historyIndex]?.replace(/^nostr:/, "") ==
           nip19.value.replace(/^nostr:/, "")
