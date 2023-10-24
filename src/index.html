@@ -111,9 +111,7 @@
         await pool.close(relays);
 
         return nip21s.reduce((acc, obj) => {
-          const { type, data } = window.NostrTools.nip19.decode(
-            obj.replace(/^nostr:/, "")
-          );
+          const { type, data } = window.NostrTools.nip21.parse(obj).decoded;
           return {
             ...acc,
             [obj]: events.find((event) =>
