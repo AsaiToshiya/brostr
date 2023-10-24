@@ -85,27 +85,15 @@
       // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
       const fetchResourceEvents = async () => {
         const nip21s = [
-          ...[
-            ...iframe.contentWindow.document.querySelectorAll(
-              "script[src^='nostr:']"
-            ),
-          ].map((script) => script.src),
-          ...[
-            ...iframe.contentWindow.document.querySelectorAll(
-              "link[href^='nostr:']"
-            ),
-          ].map((link) => link.href),
-          ...[
-            ...iframe.contentWindow.document.querySelectorAll(
-              "img[src^='nostr:']"
-            ),
-          ].map((img) => img.src),
-        ];
+          ...iframe.contentWindow.document.querySelectorAll(
+            "script[src^='nostr:'], link[href^='nostr:'], img[src^='nostr:']"
+          ),
+        ].map((el) => el.src || el.href);
 
         const pool = new window.NostrTools.SimplePool();
-        const filters = nip21s.map((nip19) => {
+        const filters = nip21s.map((nip21) => {
           const { type, data } = window.NostrTools.nip19.decode(
-            nip19.replace(/^nostr:/, "")
+            nip21.replace(/^nostr:/, "")
           );
           return type === "nevent"
             ? {
