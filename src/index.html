@@ -69,21 +69,18 @@
         attributeName,
         mimeType,
         events
-      ) => {
+      ) =>
         [
           ...iframe.contentWindow.document.querySelectorAll(
             `${tagName}[${attributeName}^='nostr:']`
           ),
-        ].map((el) => {
-          const nip19 = el[attributeName];
-
-          const event = events[nip19];
-
+        ].forEach((el) => {
+          const nip21 = el[attributeName];
+          const event = events[nip21];
           el[attributeName] =
             `data:${mimeType};base64,` +
             btoa(unescape(encodeURIComponent(event.content)));
         });
-      };
 
       // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
       const fetchResourceEvents = async () => {
