@@ -82,6 +82,21 @@
             btoa(unescape(encodeURIComponent(event.content)));
         });
 
+      const createFilter = (uri) => {
+        const { type, data } = window.NostrTools.nip19.decode(
+          uri.replace(/^nostr:/, "")
+        );
+        return type === "nevent"
+          ? {
+              ids: [data.id],
+            }
+          : {
+              kinds: [data.kind],
+              authors: [data.pubkey],
+              "#d": [data.identifier],
+            };
+      };
+
       // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
       const fetchResourceEvents = async () => {
         const nip21s = [
@@ -91,20 +106,7 @@
         ].map((el) => el.src || el.href);
 
         const pool = new window.NostrTools.SimplePool();
-        const filters = nip21s.map((nip21) => {
-          const { type, data } = window.NostrTools.nip19.decode(
-            nip21.replace(/^nostr:/, "")
-          );
-          return type === "nevent"
-            ? {
-                ids: [data.id],
-              }
-            : {
-                kinds: [data.kind],
-                authors: [data.pubkey],
-                "#d": [data.identifier],
-              };
-        });
+        const filters = nip21s.map(createFilter);
         const events = await pool.list(relays, filters);
         await pool.close(relays);
 
@@ -167,19 +169,7 @@
         forward.disabled = historyIndex >= history.length - 1;
         uri.value = nip19;
 
-        const { type, data } = window.NostrTools.nip19.decode(
-          nip19.replace(/^nostr:/, "")
-        );
-        const filter =
-          type === "nevent"
-            ? {
-                ids: [data.id],
-              }
-            : {
-                kinds: [data.kind],
-                authors: [data.pubkey],
-                "#d": [data.identifier],
-              };
+        const filter = createFilter(nip19);
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
         const kind =
