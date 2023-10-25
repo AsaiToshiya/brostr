@@ -112,16 +112,14 @@
 
         return nip21s.reduce((acc, obj) => {
           const { type, data } = window.NostrTools.nip21.parse(obj).decoded;
-          return {
-            ...acc,
-            [obj]: events.find((event) =>
-              type === "nevent"
-                ? event.id == data.id
-                : event.kind == data.kind &&
-                  event.pubkey == data.pubkey &&
-                  event.tags.find((tag) => tag[0] == "d")[1] == data.identifier
-            ),
-          };
+          const event = events.find((event) =>
+            type === "nevent"
+              ? event.id == data.id
+              : event.kind == data.kind &&
+                event.pubkey == data.pubkey &&
+                event.tags.find((tag) => tag[0] == "d")[1] == data.identifier
+          );
+          return { ...acc, [obj]: event };
         }, {});
       };
 
