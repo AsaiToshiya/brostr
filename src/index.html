@@ -157,20 +157,22 @@
             );
       };
 
-      const updateContent = async (nip19) => {
+      const updateContent = async (uri) => {
         back.disabled = historyIndex <= 0;
         forward.disabled = historyIndex >= history.length - 1;
-        uri.value = nip19;
+        document.querySelector("#uri").value = uri;
 
-        const filter = createFilter(nip19);
+        const filter = createFilter(uri);
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
+
         const kind =
           event.kind == 30036 ? parseInt(findTag(event, "k")[1]) : event.kind;
         const content =
           event.kind == 30036
             ? JSON.parse(event.content).content
             : event.content;
+
         iframe.srcdoc =
           kind == 5392 || kind == 35392
             ? content
