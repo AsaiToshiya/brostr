@@ -117,11 +117,14 @@
               ? event.id == data.id
               : event.kind == data.kind &&
                 event.pubkey == data.pubkey &&
-                event.tags.find((tag) => tag[0] == "d")[1] == data.identifier
+                findTag(event, "d")[1] == data.identifier
           );
           return { ...acc, [obj]: event };
         }, {});
       };
+
+      const findTag = (event, tagName) =>
+        event?.tags.find((tag) => tag[0] == tagName);
 
       const onload = async () => {
         const events = await fetchResourceEvents();
@@ -139,7 +142,7 @@
 
           const event = events[nip19];
 
-          const typeTag = event?.tags.find((tag) => tag[0] == "type");
+          const typeTag = findTag(event, "type");
           typeTag && (img.src = `data:${typeTag[1]};base64,${event.content}`);
         });
 
@@ -169,9 +172,7 @@
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
         const kind =
-          event.kind == 30036
-            ? parseInt(event.tags.find((tag) => tag[0] == "k")[1])
-            : event.kind;
+          event.kind == 30036 ? parseInt(findTag(event, "k")[1]) : event.kind;
         const content =
           event.kind == 30036
             ? JSON.parse(event.content).content
