@@ -244,7 +244,8 @@
       let historyIndex = -1;
 
       const nip19 = new URLSearchParams(location.search).get("nip19");
-      nip19 && (async () => await updateContent(nip19))();
+      nip19 && (document.querySelector("#nip19").value = nip19);
+      nip19 && (async () => await handleClick())();
     </script>
   </body>
 </html>
