@@ -130,18 +130,14 @@
         const events = await fetchResourceEvents();
 
         convertNip21ToDataUrl("script", "src", "text/javascript", events);
-
         convertNip21ToDataUrl("link", "href", "text/css", events);
-
         [
           ...iframe.contentWindow.document.querySelectorAll(
             "img[src^='nostr:']"
           ),
-        ].map((img) => {
-          const nip19 = img.src;
-
-          const event = events[nip19];
-
+        ].forEach((img) => {
+          const nip21 = img.src;
+          const event = events[nip21];
           const typeTag = findTag(event, "type");
           typeTag && (img.src = `data:${typeTag[1]};base64,${event.content}`);
         });
@@ -149,18 +145,16 @@
         iframe.srcdoc = new XMLSerializer().serializeToString(
           iframe.contentWindow.document
         );
-        iframe.onload = () => {
-          iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
-            a.href.startsWith("nostr:") &&
-              a.addEventListener("click", (event) => {
-                const nip19 = a.href.replace(/^nostr:/, "");
-                uri.value = nip19;
-                history = [...history.slice(0, ++historyIndex), nip19];
-                (async () => await updateContent(nip19))();
+        iframe.onload = () =>
+          iframe.contentWindow.document
+            .querySelectorAll("a[href^='nostr:']")
+            .forEach((a) =>
+              a.addEventListener("click", async (event) => {
+                uri.value = event.target.href.replace(/^nostr:/, "");
+                await handleClick();
                 event.preventDefault();
-              });
-          });
-        };
+              })
+            );
       };
 
       const updateContent = async (nip19) => {
