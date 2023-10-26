@@ -157,15 +157,13 @@
             );
       };
 
-      const unwrapKind30036 = (event) => {
-        const kind =
-          event.kind == 30036 ? parseInt(findTag(event, "k")[1]) : event.kind;
-        const content =
-          event.kind == 30036
-            ? JSON.parse(event.content).content
-            : event.content;
-        return { kind, content };
-      };
+      const unwrapKind30036 = (event) =>
+        event.kind == 30036
+          ? {
+              kind: parseInt(findTag(event, "k")[1]),
+              content: JSON.parse(event.content).content,
+            }
+          : event;
 
       const updateContent = async (uri) => {
         back.disabled = historyIndex <= 0;
