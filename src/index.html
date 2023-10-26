@@ -184,8 +184,8 @@
       };
 
       const handleBackClick = async () => {
-        const nip19 = history[--historyIndex];
-        await updateContent(nip19);
+        const uri = history[--historyIndex];
+        await updateContent(uri);
       };
 
       const handleClick = async () => {
@@ -200,8 +200,8 @@
       };
 
       const handleForwardClick = async () => {
-        const nip19 = history[++historyIndex];
-        await updateContent(nip19);
+        const uri = history[++historyIndex];
+        await updateContent(uri);
       };
 
       let history = [];
