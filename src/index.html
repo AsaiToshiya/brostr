@@ -189,14 +189,13 @@
       };
 
       const handleClick = async () => {
-        const nip19 = uri;
         history =
           history[historyIndex]?.replace(/^nostr:/, "") ==
-          nip19.value.replace(/^nostr:/, "")
+          uri.value.replace(/^nostr:/, "")
             ? history
-            : [...history.slice(0, ++historyIndex), nip19.value];
+            : [...history.slice(0, ++historyIndex), uri.value];
 
-        await updateContent(nip19.value);
+        await updateContent(uri.value);
       };
 
       const handleForwardClick = async () => {
