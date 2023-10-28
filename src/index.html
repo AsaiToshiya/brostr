@@ -166,8 +166,8 @@
           : event;
 
       const updateContent = async (uri) => {
-        back.disabled = historyIndex <= 0;
-        forward.disabled = historyIndex >= history.length - 1;
+        back.disabled = history.cannotBack();
+        forward.disabled = history.cannotForward();
         document.querySelector("#uri").value = uri;
 
         const filter = createFilter(uri);
@@ -184,27 +184,49 @@
       };
 
       const handleBackClick = async () => {
-        const uri = history[--historyIndex];
+        const uri = history.back();
         await updateContent(uri);
       };
 
       const handleClick = async () => {
-        history =
-          history[historyIndex]?.replace(/^nostr:/, "") ==
-          uri.value.replace(/^nostr:/, "")
-            ? history
-            : [...history.slice(0, ++historyIndex), uri.value];
+        history.push(uri.value);
 
         await updateContent(uri.value);
       };
 
       const handleForwardClick = async () => {
-        const uri = history[++historyIndex];
+        const uri = history.forward();
         await updateContent(uri);
       };
 
-      let history = [];
-      let historyIndex = -1;
+      let history = {
+        history: [],
+        historyIndex: -1,
+
+        push(uri) {
+          this.history =
+            this.history[this.historyIndex]?.replace(/^nostr:/, "") ==
+            uri.replace(/^nostr:/, "")
+              ? this.history
+              : [...this.history.slice(0, ++this.historyIndex), uri];
+        },
+
+        back() {
+          return this.history[--this.historyIndex];
+        },
+
+        forward() {
+          return this.history[++this.historyIndex];
+        },
+
+        cannotBack() {
+          return this.historyIndex <= 0;
+        },
+
+        cannotForward() {
+          return this.historyIndex >= this.history.length - 1;
+        },
+      };
 
       const nip19 = new URLSearchParams(location.search).get("nip19");
       nip19 && (async () => await updateContent(nip19))();
