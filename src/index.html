@@ -28,13 +28,18 @@
     <meta name="theme-color" content="#ffffff" />
     <title>Brostr</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
   </head>
   <body class="flex flex-col h-full m-0 p-0 w-full">
     <div class="flex">
-      <button id="back" onclick="handleBackClick()" disabled="true">Back</button
+      <button id="back" onclick="handleBackClick()" disabled="true">
+        <i class="fas fa-arrow-left"></i></button
       >&nbsp;
       <button id="forward" onclick="handleForwardClick()" disabled="true">
-        Forward</button
+        <i class="fas fa-arrow-right"></i></button
       >&nbsp;
       <input
         id="nip19"
@@ -43,7 +48,7 @@
         value="nevent1qqst99d8u7484nv3tsnthh6xpvz0nc8fdfug9q5ch2yxwmjllfm5ccsp5602c"
         class="w-full"
       />&nbsp;
-      <button onclick="handleClick()">Go</button>
+      <button onclick="handleClick()"><i class="fas fa-search"></i></button>
     </div>
     <iframe id="iframe" class="grow m-0 p-0"></iframe>
 
