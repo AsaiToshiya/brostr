@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="height: 100%; margin: 0; padding: 0; width: 100%">
+<html class="h-full m-0 p-0 w-full">
   <head>
     <link
       rel="apple-touch-icon"
@@ -27,18 +27,10 @@
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
     <title>Brostr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body
-    style="
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-    "
-  >
-    <div style="display: flex">
+  <body class="flex flex-col h-full m-0 p-0 w-full">
+    <div class="flex">
       <button id="back" onclick="handleBackClick()" disabled="true">Back</button
       >&nbsp;
       <button id="forward" onclick="handleForwardClick()" disabled="true">
@@ -49,11 +41,11 @@
         type="text"
         size="50"
         value="nevent1qqst99d8u7484nv3tsnthh6xpvz0nc8fdfug9q5ch2yxwmjllfm5ccsp5602c"
-        style="width: 100%"
+        class="w-full"
       />&nbsp;
       <button onclick="handleClick()">Go</button>
     </div>
-    <iframe id="iframe" style="flex-grow: 1; margin: 0; padding: 0"></iframe>
+    <iframe id="iframe" class="grow m-0 p-0"></iframe>
 
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
