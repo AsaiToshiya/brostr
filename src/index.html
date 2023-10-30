@@ -39,7 +39,7 @@
         id="back"
         onclick="handleBackClick()"
         disabled="true"
-        class="p-1 hover:bg-gray-200 rounded mr-2"
+        class="p-1 rounded mr-2 text-gray-400"
       >
         <i class="fas fa-arrow-left"></i>
       </button>
@@ -47,7 +47,7 @@
         id="forward"
         onclick="handleForwardClick()"
         disabled="true"
-        class="p-1 hover:bg-gray-200 rounded"
+        class="p-1 rounded text-gray-400"
       >
         <i class="fas fa-arrow-right"></i>
       </button>
@@ -195,7 +195,19 @@
 
       const updateContent = async (nip19) => {
         back.disabled = historyIndex <= 0;
+        back.disabled
+          ? back.classList.remove("hover:bg-gray-200")
+          : back.classList.add("hover:bg-gray-200");
+        back.disabled
+          ? back.classList.add("text-gray-400")
+          : back.classList.remove("text-gray-400");
         forward.disabled = historyIndex >= history.length - 1;
+        forward.disabled
+          ? forward.classList.remove("hover:bg-gray-200")
+          : forward.classList.add("hover:bg-gray-200");
+        forward.disabled
+          ? forward.classList.add("text-gray-400")
+          : forward.classList.remove("text-gray-400");
         document.querySelector("#nip19").value = nip19;
 
         const { type, data } = window.NostrTools.nip19.decode(
