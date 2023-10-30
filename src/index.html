@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="height: 100%; margin: 0; padding: 0; width: 100%">
+<html class="h-full m-0 p-0 w-full">
   <head>
     <link
       rel="apple-touch-icon"
@@ -27,33 +27,45 @@
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
     <title>Brostr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
   </head>
-  <body
-    style="
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-    "
-  >
-    <div style="display: flex">
-      <button id="back" onclick="handleBackClick()" disabled="true">Back</button
-      >&nbsp;
-      <button id="forward" onclick="handleForwardClick()" disabled="true">
-        Forward</button
-      >&nbsp;
+  <body class="flex flex-col h-full m-0 p-0 w-full">
+    <div class="flex p-2 border-b border-gray-300">
+      <button
+        id="back"
+        onclick="handleBackClick()"
+        disabled="true"
+        class="w-8 h-8 rounded-full mr-1 text-gray-400"
+      >
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <button
+        id="forward"
+        onclick="handleForwardClick()"
+        disabled="true"
+        class="w-8 h-8 rounded-full text-gray-400"
+      >
+        <i class="fas fa-arrow-right"></i>
+      </button>
       <input
         id="nip19"
         type="text"
         size="50"
         value="nevent1qqst99d8u7484nv3tsnthh6xpvz0nc8fdfug9q5ch2yxwmjllfm5ccsp5602c"
-        style="width: 100%"
-      />&nbsp;
-      <button onclick="handleClick()">Go</button>
+        class="w-full bg-gray-100 rounded-full py-1 px-4 mr-1 ml-2"
+      />
+      <button
+        onclick="handleClick()"
+        class="px-2 py-1 hover:bg-gray-200 rounded"
+      >
+        Go
+      </button>
     </div>
-    <iframe id="iframe" style="flex-grow: 1; margin: 0; padding: 0"></iframe>
+    <iframe id="iframe" class="grow m-0 p-0"></iframe>
 
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
@@ -186,7 +198,19 @@
 
       const updateContent = async (nip19) => {
         back.disabled = historyIndex <= 0;
+        back.disabled
+          ? back.classList.remove("hover:bg-gray-200")
+          : back.classList.add("hover:bg-gray-200");
+        back.disabled
+          ? back.classList.add("text-gray-400")
+          : back.classList.remove("text-gray-400");
         forward.disabled = historyIndex >= history.length - 1;
+        forward.disabled
+          ? forward.classList.remove("hover:bg-gray-200")
+          : forward.classList.add("hover:bg-gray-200");
+        forward.disabled
+          ? forward.classList.add("text-gray-400")
+          : forward.classList.remove("text-gray-400");
         document.querySelector("#nip19").value = nip19;
 
         const { type, data } = window.NostrTools.nip19.decode(
