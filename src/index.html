@@ -166,6 +166,8 @@
           : event;
 
       const updateContent = async (uri) => {
+        history.push(uri);
+
         back.disabled = history.cannotBack();
         forward.disabled = history.cannotForward();
         document.querySelector("#uri").value = uri;
@@ -188,11 +190,7 @@
         await updateContent(uri);
       };
 
-      const handleClick = async () => {
-        history.push(uri.value);
-
-        await updateContent(uri.value);
-      };
+      const handleClick = async () => await updateContent(uri.value);
 
       const handleForwardClick = async () => {
         const uri = history.forward();
