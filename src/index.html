@@ -150,7 +150,7 @@
             .querySelectorAll("a[href^='nostr:']")
             .forEach((a) =>
               a.addEventListener("click", async (event) => {
-                uri.value = event.target.href.replace(/^nostr:/, "");
+                uri.value = event.target.href;
                 await handleClick();
                 event.preventDefault();
               })
@@ -166,13 +166,15 @@
           : event;
 
       const updateContent = async (uri) => {
-        history.push(uri);
+        const nip19 = uri.replace(/^nostr:/, "");
+
+        history.push(nip19);
 
         back.disabled = history.cannotBack();
         forward.disabled = history.cannotForward();
-        document.querySelector("#uri").value = uri;
+        document.querySelector("#uri").value = nip19;
 
-        const filter = createFilter(uri);
+        const filter = createFilter(nip19);
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
 
