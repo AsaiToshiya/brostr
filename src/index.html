@@ -151,7 +151,7 @@
             .forEach((a) =>
               a.addEventListener("click", async (event) => {
                 uri.value = event.target.href;
-                await handleClick();
+                await updateContent(uri.value);
                 event.preventDefault();
               })
             );
