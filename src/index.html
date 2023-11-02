@@ -150,8 +150,7 @@
             .querySelectorAll("a[href^='nostr:']")
             .forEach((a) =>
               a.addEventListener("click", async (event) => {
-                uri.value = event.target.href;
-                await updateContent(uri.value);
+                await updateContent(event.target.href);
                 event.preventDefault();
               })
             );
