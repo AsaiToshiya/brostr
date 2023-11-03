@@ -169,8 +169,8 @@
 
         history.push(nip19);
 
-        back.disabled = !history.cannotBack();
-        forward.disabled = !history.cannotForward();
+        back.disabled = !history.canBack();
+        forward.disabled = !history.canForward();
         document.querySelector("#uri").value = nip19;
 
         const filter = createFilter(nip19);
@@ -218,11 +218,11 @@
           return this.history[++this.historyIndex];
         },
 
-        cannotBack() {
+        canBack() {
           return this.historyIndex > 0;
         },
 
-        cannotForward() {
+        canForward() {
           return this.historyIndex < this.history.length - 1;
         },
       };
