@@ -150,7 +150,7 @@
             .querySelectorAll("a[href^='nostr:']")
             .forEach((a) =>
               a.addEventListener("click", async (event) => {
-                await updateContent(event.target.href);
+                await open(event.target.href);
                 event.preventDefault();
               })
             );
@@ -164,7 +164,7 @@
             }
           : event;
 
-      const updateContent = async (uri) => {
+      const open = async (uri) => {
         const nip19 = uri.replace(/^nostr:/, "");
 
         history.push(nip19);
@@ -188,14 +188,14 @@
 
       const handleBackClick = async () => {
         const uri = history.back();
-        await updateContent(uri);
+        await open(uri);
       };
 
-      const handleClick = async () => await updateContent(uri.value);
+      const handleClick = async () => await open(uri.value);
 
       const handleForwardClick = async () => {
         const uri = history.forward();
-        await updateContent(uri);
+        await open(uri);
       };
 
       let history = {
@@ -228,7 +228,7 @@
       };
 
       const nip19 = new URLSearchParams(location.search).get("nip19");
-      nip19 && (async () => await updateContent(nip19))();
+      nip19 && (async () => await open(nip19))();
     </script>
   </body>
 </html>
