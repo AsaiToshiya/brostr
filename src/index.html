@@ -179,8 +179,8 @@
               (img.src = `data:${typeTag[1]};base64,${event.content}`);
         });
 
-        iframe.srcdoc = new XMLSerializer().serializeToString(
-          iframe.contentWindow.document
+        iframe.srcdoc = unescapeXML(
+          new XMLSerializer().serializeToString(iframe.contentWindow.document)
         );
         iframe.onload = () => {
           iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
@@ -195,6 +195,14 @@
           });
         };
       };
+
+      const unescapeXML = (xml) =>
+        xml
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">")
+          .replace(/&amp;/g, "&")
+          .replace(/&quot;/g, '"')
+          .replace(/&apos;/g, "'");
 
       const updateContent = async (nip19) => {
         back.disabled = historyIndex <= 0;
