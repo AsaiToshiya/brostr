@@ -64,22 +64,17 @@
         "wss://r.hostr.cc",
       ];
 
-      const replaceNip21ToResource = (
-        tagName,
-        attributeName,
-        mimeType,
-        events
-      ) =>
+      const replaceNip21ToResource = (events) =>
         [
           ...iframe.contentWindow.document.querySelectorAll(
-            `${tagName}[${attributeName}^='nostr:']`
+            "script[src^='nostr:'], link[href^='nostr:']"
           ),
         ].forEach((el) => {
-          const nip21 = el[attributeName];
+          const nip21 = el.src || el.href;
           const event = events[nip21];
-          el[attributeName] =
-            `data:${mimeType};base64,` +
-            btoa(unescape(encodeURIComponent(event.content)));
+          const data = btoa(unescape(encodeURIComponent(event.content)));
+          el.src && (el.src = `data:text/javascript;base64,${data}`);
+          el.href && (el.href = `data:text/css;base64,${data}`);
         });
 
       const createFilter = (uri) => {
@@ -129,8 +124,8 @@
       const onload = async () => {
         const events = await fetchResourceEvents();
 
-        replaceNip21ToResource("script", "src", "text/javascript", events);
-        replaceNip21ToResource("link", "href", "text/css", events);
+        replaceNip21ToResource(events);
+        replaceNip21ToResource(events);
         [
           ...iframe.contentWindow.document.querySelectorAll(
             "img[src^='nostr:']"
