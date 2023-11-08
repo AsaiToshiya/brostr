@@ -64,7 +64,7 @@
         "wss://r.hostr.cc",
       ];
 
-      const convertNip21ToDataUrl = (
+      const replaceNip21ToResource = (
         tagName,
         attributeName,
         mimeType,
@@ -129,8 +129,8 @@
       const onload = async () => {
         const events = await fetchResourceEvents();
 
-        convertNip21ToDataUrl("script", "src", "text/javascript", events);
-        convertNip21ToDataUrl("link", "href", "text/css", events);
+        replaceNip21ToResource("script", "src", "text/javascript", events);
+        replaceNip21ToResource("link", "href", "text/css", events);
         [
           ...iframe.contentWindow.document.querySelectorAll(
             "img[src^='nostr:']"
