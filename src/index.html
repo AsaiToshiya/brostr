@@ -182,18 +182,6 @@
         iframe.srcdoc = unescapeXML(
           new XMLSerializer().serializeToString(iframe.contentWindow.document)
         );
-        iframe.onload = () => {
-          iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
-            a.href.startsWith("nostr:") &&
-              a.addEventListener("click", (event) => {
-                const nip19 = a.href.replace(/^nostr:/, "");
-                document.querySelector("#nip19").value = nip19;
-                history = [...history.slice(0, ++historyIndex), nip19];
-                (async () => await updateContent(nip19))();
-                event.preventDefault();
-              });
-          });
-        };
       };
 
       const unescapeXML = (xml) =>
@@ -272,12 +260,27 @@
         await updateContent(nip19);
       };
 
+      const handleNostrLinkClick = (event) => {
+        const nip19 = event.target.href.replace(/^nostr:/, "");
+        document.querySelector("#nip19").value = nip19;
+        history = [...history.slice(0, ++historyIndex), nip19];
+        (async () => await updateContent(nip19))();
+        event.preventDefault();
+      };
+
       let history = [];
       let historyIndex = -1;
 
       const nip19 = new URLSearchParams(location.search).get("nip19");
       nip19 && (document.querySelector("#nip19").value = nip19);
       nip19 && (async () => await handleClick())();
+
+      setInterval(() => {
+        iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
+          a.href.startsWith("nostr:") &&
+            a.addEventListener("click", handleNostrLinkClick);
+        });
+      }, 2000);
     </script>
   </body>
 </html>
