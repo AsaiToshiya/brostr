@@ -64,9 +64,9 @@
         "wss://r.hostr.cc",
       ];
 
-      const replaceNip21ToResource = (events) => {
+      const replaceNip21ToResource = (document, events) => {
         [
-          ...iframe.contentWindow.document.querySelectorAll(
+          ...document.querySelectorAll(
             "script[src^='nostr:'], link[href^='nostr:']"
           ),
         ].forEach((el) => {
@@ -76,11 +76,7 @@
           el.src && (el.src = `data:text/javascript;base64,${data}`);
           el.href && (el.href = `data:text/css;base64,${data}`);
         });
-        [
-          ...iframe.contentWindow.document.querySelectorAll(
-            "img[src^='nostr:']"
-          ),
-        ].forEach((img) => {
+        [...document.querySelectorAll("img[src^='nostr:']")].forEach((img) => {
           const nip21 = img.src;
           const event = events[nip21];
           const typeTag = findTag(event, "type");
@@ -135,7 +131,7 @@
       const onload = async () => {
         const events = await fetchResourceEvents();
 
-        replaceNip21ToResource(events);
+        replaceNip21ToResource(iframe.contentWindow.document, events);
 
         iframe.srcdoc = new XMLSerializer().serializeToString(
           iframe.contentWindow.document
