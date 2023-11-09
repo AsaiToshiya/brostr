@@ -52,7 +52,7 @@
         <i class="fas fa-arrow-right"></i>
       </button>
       <input
-        id="nip19"
+        id="uri"
         type="text"
         size="50"
         value="nevent1qqst99d8u7484nv3tsnthh6xpvz0nc8fdfug9q5ch2yxwmjllfm5ccsp5602c"
@@ -69,7 +69,7 @@
 
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
-      const RELAYS = [
+      const relays = [
         "wss://nos.lol",
         "wss://nostr.bitcoiner.social",
         "wss://nostr.mom",
@@ -80,104 +80,77 @@
         "wss://r.hostr.cc",
       ];
 
-      const convertNip19ToDataUrl = (
-        tagName,
-        attributeName,
-        mimeType,
-        events
-      ) => {
-        [
-          ...iframe.contentWindow.document.querySelectorAll(
-            `${tagName}[${attributeName}^='nostr:']`
-          ),
-        ].map((el) => {
-          const nip19 = el[attributeName];
-
-          const event = events[nip19];
-
-          el[attributeName] =
-            `data:${mimeType};base64,` +
-            btoa(unescape(encodeURIComponent(event.content)));
-        });
-      };
-
-      // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
-      const fetchResourceEvents = async () => {
-        const nip21s = [
-          ...[
-            ...iframe.contentWindow.document.querySelectorAll(
-              "script[src^='nostr:']"
-            ),
-          ].map((script) => script.src),
-          ...[
-            ...iframe.contentWindow.document.querySelectorAll(
-              "link[href^='nostr:']"
-            ),
-          ].map((link) => link.href),
-          ...[
-            ...iframe.contentWindow.document.querySelectorAll(
-              "img[src^='nostr:']"
-            ),
-          ].map((img) => img.src),
-        ];
-
-        const pool = new window.NostrTools.SimplePool();
-        const filters = nip21s.map((nip19) => {
-          const { type, data } = window.NostrTools.nip19.decode(
-            nip19.replace(/^nostr:/, "")
-          );
-          return type === "nevent"
-            ? {
-                ids: [data.id],
-              }
-            : {
-                kinds: [data.kind],
-                authors: [data.pubkey],
-                "#d": [data.identifier],
-              };
-        });
-        const events = await pool.list(RELAYS, filters);
-        await pool.close(RELAYS);
-
-        return nip21s.reduce((acc, obj) => {
-          const { type, data } = window.NostrTools.nip19.decode(
-            obj.replace(/^nostr:/, "")
-          );
-          return {
-            ...acc,
-            [obj]: events.find((event) =>
-              type === "nevent"
-                ? event.id == data.id
-                : event.kind == data.kind &&
-                  event.pubkey == data.pubkey &&
-                  event.tags.find((tag) => tag[0] == "d")[1] == data.identifier
-            ),
-          };
-        }, {});
-      };
-
-      const onload = async () => {
-        const events = await fetchResourceEvents();
-
-        convertNip19ToDataUrl("script", "src", "text/javascript", events);
-
-        convertNip19ToDataUrl("link", "href", "text/css", events);
+      const replaceNip21ToResource = async (document) => {
+        const events = await fetchResourceEvents(document);
 
         [
-          ...iframe.contentWindow.document.querySelectorAll(
-            "img[src^='nostr:']"
+          ...document.querySelectorAll(
+            "script[src^='nostr:'], link[href^='nostr:']"
           ),
-        ].map((img) => {
-          const nip19 = img.src;
-
-          const event = events[nip19];
-
-          const typeTag = event?.tags.find((tag) => tag[0] == "type");
+        ].forEach((el) => {
+          const nip21 = el.src || el.href;
+          const event = events[nip21];
+          const data = btoa(unescape(encodeURIComponent(event.content)));
+          el.src && (el.src = `data:text/javascript;base64,${data}`);
+          el.href && (el.href = `data:text/css;base64,${data}`);
+        });
+        [...document.querySelectorAll("img[src^='nostr:']")].forEach((img) => {
+          const nip21 = img.src;
+          const event = events[nip21];
+          const typeTag = findTag(event, "type");
           event?.kind == 1063
-            ? (img.src = event?.tags.find((tag) => tag[0] == "url")[1])
+            ? (img.src = findTag(event, "url")[1])
             : typeTag &&
               (img.src = `data:${typeTag[1]};base64,${event.content}`);
         });
+      };
+
+      const createFilter = (uri) => {
+        const { type, data } = window.NostrTools.nip19.decode(
+          uri.replace(/^nostr:/, "")
+        );
+        return type === "nevent"
+          ? {
+              ids: [data.id],
+            }
+          : {
+              kinds: [data.kind],
+              authors: [data.pubkey],
+              "#d": [data.identifier],
+            };
+      };
+
+      // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
+      const fetchResourceEvents = async (document) => {
+        const nip21s = [
+          ...document.querySelectorAll(
+            "script[src^='nostr:'], link[href^='nostr:'], img[src^='nostr:']"
+          ),
+        ].map((el) => el.src || el.href);
+
+        const pool = new window.NostrTools.SimplePool();
+        const filters = nip21s.map(createFilter);
+        const events = await pool.list(relays, filters);
+        await pool.close(relays);
+
+        return nip21s.reduce((acc, obj) => {
+          const { type, data } = window.NostrTools.nip21.parse(obj).decoded;
+          const event = events.find((event) =>
+            type === "nevent"
+              ? event.id == data.id
+              : event.kind == data.kind &&
+                event.pubkey == data.pubkey &&
+                findTag(event, "d")[1] == data.identifier
+          );
+          return { ...acc, [obj]: event };
+        }, {});
+      };
+
+      const findTag = (event, tagName) =>
+        event?.tags.find((tag) => tag[0] == tagName);
+
+      const onload = async () => {
+        await replaceNip21ToResource(iframe.contentWindow.document);
 
         iframe.srcdoc = unescapeXML(
           new XMLSerializer().serializeToString(iframe.contentWindow.document)
@@ -193,46 +166,41 @@
           .replace(/&quot;/g, '"')
           .replace(/&apos;/g, "'");
 
-      const updateContent = async (nip19) => {
-        back.disabled = historyIndex <= 0;
+      const unwrapKind30036 = (event) =>
+        event.kind == 30036
+          ? {
+              kind: parseInt(findTag(event, "k")[1]),
+              content: JSON.parse(event.content).content,
+            }
+          : event;
+
+      const open = async (uri) => {
+        const nip19 = uri.replace(/^nostr:/, "");
+
+        history.push(nip19);
+
+        back.disabled = !history.canBack();
         back.disabled
           ? back.classList.remove("hover:bg-gray-200")
           : back.classList.add("hover:bg-gray-200");
         back.disabled
           ? back.classList.add("text-gray-400")
           : back.classList.remove("text-gray-400");
-        forward.disabled = historyIndex >= history.length - 1;
+        forward.disabled = !history.canForward();
         forward.disabled
           ? forward.classList.remove("hover:bg-gray-200")
           : forward.classList.add("hover:bg-gray-200");
         forward.disabled
           ? forward.classList.add("text-gray-400")
           : forward.classList.remove("text-gray-400");
-        document.querySelector("#nip19").value = nip19;
+        document.querySelector("#uri").value = nip19;
 
-        const { type, data } = window.NostrTools.nip19.decode(
-          nip19.replace(/^nostr:/, "")
-        );
-        const filter =
-          type === "nevent"
-            ? {
-                ids: [data.id],
-              }
-            : {
-                kinds: [data.kind],
-                authors: [data.pubkey],
-                "#d": [data.identifier],
-              };
+        const filter = createFilter(nip19);
         const pool = new window.NostrTools.SimplePool();
-        const event = await pool.get(RELAYS, filter);
-        const kind =
-          event.kind == 30036
-            ? parseInt(event.tags.find((tag) => tag[0] == "k")[1])
-            : event.kind;
-        const content =
-          event.kind == 30036
-            ? JSON.parse(event.content).content
-            : event.content;
+        const event = await pool.get(relays, filter);
+
+        const { kind, content } = unwrapKind30036(event);
+
         iframe.srcdoc =
           kind == 5392 || kind == 35392
             ? content
@@ -241,47 +209,61 @@
       };
 
       const handleBackClick = async () => {
-        const nip19 = history[--historyIndex];
-        await updateContent(nip19);
+        const uri = history.back();
+        await open(uri);
       };
 
-      const handleClick = async () => {
-        const nip19 = document.querySelector("#nip19");
-        history =
-          history[historyIndex]?.replace(/^nostr:/, "") ==
-          nip19.value.replace(/^nostr:/, "")
-            ? history
-            : [...history.slice(0, ++historyIndex), nip19.value];
-
-        await updateContent(nip19.value);
-      };
+      const handleClick = async () => await open(uri.value);
 
       const handleForwardClick = async () => {
-        const nip19 = history[++historyIndex];
-        await updateContent(nip19);
+        const uri = history.forward();
+        await open(uri);
       };
 
-      const handleNostrLinkClick = (event) => {
-        const nip19 = event.target.href.replace(/^nostr:/, "");
-        document.querySelector("#nip19").value = nip19;
-        history = [...history.slice(0, ++historyIndex), nip19];
-        (async () => await updateContent(nip19))();
+      const handleNostrLinkClick = async (event) => {
+        await open(event.target.href);
         event.preventDefault();
       };
 
-      let history = [];
-      let historyIndex = -1;
+      const history = {
+        _history: [],
+        _index: -1,
+
+        push(uri) {
+          this._history =
+            this._history[this._index]?.replace(/^nostr:/, "") ==
+            uri.replace(/^nostr:/, "")
+              ? this._history
+              : [...this._history.slice(0, ++this._index), uri];
+        },
+
+        back() {
+          return this._history[--this._index];
+        },
+
+        forward() {
+          return this._history[++this._index];
+        },
+
+        canBack() {
+          return this._index > 0;
+        },
+
+        canForward() {
+          return this._index < this._history.length - 1;
+        },
+      };
 
       const nip19 = new URLSearchParams(location.search).get("nip19");
-      nip19 && (document.querySelector("#nip19").value = nip19);
-      nip19 && (async () => await handleClick())();
+      nip19 && (async () => await open(nip19))();
 
-      setInterval(() => {
-        iframe.contentWindow.document.querySelectorAll("a").forEach((a) => {
-          a.href.startsWith("nostr:") &&
-            a.addEventListener("click", handleNostrLinkClick);
-        });
-      }, 2000);
+      setInterval(
+        () =>
+          iframe.contentWindow.document
+            .querySelectorAll("a[href^='nostr:']")
+            .forEach((a) => a.addEventListener("click", handleNostrLinkClick)),
+        2000
+      );
     </script>
   </body>
 </html>
