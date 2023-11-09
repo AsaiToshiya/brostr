@@ -190,31 +190,31 @@
       };
 
       const history = {
-        history: [],
-        historyIndex: -1,
+        _history: [],
+        _index: -1,
 
         push(uri) {
-          this.history =
-            this.history[this.historyIndex]?.replace(/^nostr:/, "") ==
+          this._history =
+            this._history[this._index]?.replace(/^nostr:/, "") ==
             uri.replace(/^nostr:/, "")
-              ? this.history
-              : [...this.history.slice(0, ++this.historyIndex), uri];
+              ? this._history
+              : [...this._history.slice(0, ++this._index), uri];
         },
 
         back() {
-          return this.history[--this.historyIndex];
+          return this._history[--this._index];
         },
 
         forward() {
-          return this.history[++this.historyIndex];
+          return this._history[++this._index];
         },
 
         canBack() {
-          return this.historyIndex > 0;
+          return this._index > 0;
         },
 
         canForward() {
-          return this.historyIndex < this.history.length - 1;
+          return this._index < this._history.length - 1;
         },
       };
 
