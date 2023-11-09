@@ -100,9 +100,9 @@
       };
 
       // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
-      const fetchResourceEvents = async () => {
+      const fetchResourceEvents = async (document) => {
         const nip21s = [
-          ...iframe.contentWindow.document.querySelectorAll(
+          ...document.querySelectorAll(
             "script[src^='nostr:'], link[href^='nostr:'], img[src^='nostr:']"
           ),
         ].map((el) => el.src || el.href);
@@ -129,7 +129,7 @@
         event?.tags.find((tag) => tag[0] == tagName);
 
       const onload = async () => {
-        const events = await fetchResourceEvents();
+        const events = await fetchResourceEvents(iframe.contentWindow.document);
 
         replaceNip21ToResource(iframe.contentWindow.document, events);
 
