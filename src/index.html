@@ -64,7 +64,9 @@
         "wss://r.hostr.cc",
       ];
 
-      const replaceNip21ToResource = (document, events) => {
+      const replaceNip21ToResource = async (document) => {
+        const events = await fetchResourceEvents(document);
+
         [
           ...document.querySelectorAll(
             "script[src^='nostr:'], link[href^='nostr:']"
@@ -129,9 +131,7 @@
         event?.tags.find((tag) => tag[0] == tagName);
 
       const onload = async () => {
-        const events = await fetchResourceEvents(iframe.contentWindow.document);
-
-        replaceNip21ToResource(iframe.contentWindow.document, events);
+        await replaceNip21ToResource(iframe.contentWindow.document);
 
         iframe.srcdoc = new XMLSerializer().serializeToString(
           iframe.contentWindow.document
