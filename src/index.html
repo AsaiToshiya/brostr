@@ -182,6 +182,7 @@
         iframe.srcdoc = unescapeXML(
           new XMLSerializer().serializeToString(iframe.contentWindow.document)
         );
+        iframe.onload = null;
       };
 
       const unescapeXML = (xml) =>
