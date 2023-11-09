@@ -125,7 +125,6 @@
         const events = await fetchResourceEvents();
 
         replaceNip21ToResource(events);
-        replaceNip21ToResource(events);
         [
           ...iframe.contentWindow.document.querySelectorAll(
             "img[src^='nostr:']"
