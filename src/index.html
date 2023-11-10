@@ -66,6 +66,7 @@
       </button>
     </div>
     <iframe id="iframe" class="grow m-0 p-0"></iframe>
+    <iframe id="virtualDom" class="hidden" sandbox="allow-same-origin"></iframe>
 
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
@@ -150,12 +151,13 @@
         event?.tags.find((tag) => tag[0] == tagName);
 
       const onload = async () => {
-        await replaceNip21ToResource(iframe.contentWindow.document);
+        await replaceNip21ToResource(virtualDom.contentWindow.document);
 
         iframe.srcdoc = unescapeXML(
-          new XMLSerializer().serializeToString(iframe.contentWindow.document)
+          new XMLSerializer().serializeToString(
+            virtualDom.contentWindow.document
+          )
         );
-        iframe.onload = null;
       };
 
       const unescapeXML = (xml) =>
@@ -201,11 +203,11 @@
 
         const { kind, content } = unwrapKind30036(event);
 
-        iframe.srcdoc =
+        virtualDom.srcdoc =
           kind == 5392 || kind == 35392
             ? content
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
-        iframe.onload = onload;
+        virtualDom.onload = onload;
       };
 
       const handleBackClick = async () => {
