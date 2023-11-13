@@ -150,13 +150,21 @@
       const findTag = (event, tagName) =>
         event?.tags.find((tag) => tag[0] == tagName);
 
-      const onload = async () => {
-        await replaceNip21ToResource(virtualDom.contentWindow.document);
+      const normalizeHtml = async (content) => {
+        virtualDom.srcdoc = content;
+        return new Promise(
+          (resolve) =>
+            (virtualDom.onload = async () => {
+              await replaceNip21ToResource(virtualDom.contentWindow.document);
 
-        iframe.srcdoc = unescapeXML(
-          new XMLSerializer().serializeToString(
-            virtualDom.contentWindow.document
-          )
+              resolve(
+                unescapeXML(
+                  new XMLSerializer().serializeToString(
+                    virtualDom.contentWindow.document
+                  )
+                )
+              );
+            })
         );
       };
 
@@ -203,11 +211,10 @@
 
         const { kind, content } = unwrapKind30036(event);
 
-        virtualDom.srcdoc =
+        iframe.srcdoc =
           kind == 5392 || kind == 35392
-            ? content
+            ? await normalizeHtml(content)
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
-        virtualDom.onload = onload;
       };
 
       const handleBackClick = async () => {
