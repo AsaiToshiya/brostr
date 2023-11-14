@@ -174,19 +174,9 @@
         history.push(nip19);
 
         back.disabled = !history.canBack();
-        back.disabled
-          ? back.classList.remove("hover:bg-gray-200")
-          : back.classList.add("hover:bg-gray-200");
-        back.disabled
-          ? back.classList.add("text-gray-400")
-          : back.classList.remove("text-gray-400");
+        updateNavigationButtonClass(back);
         forward.disabled = !history.canForward();
-        forward.disabled
-          ? forward.classList.remove("hover:bg-gray-200")
-          : forward.classList.add("hover:bg-gray-200");
-        forward.disabled
-          ? forward.classList.add("text-gray-400")
-          : forward.classList.remove("text-gray-400");
+        updateNavigationButtonClass(forward);
         document.querySelector("#uri").value = nip19;
 
         const filter = createFilter(nip19);
@@ -216,6 +206,15 @@
               content: JSON.parse(event.content).content,
             }
           : event;
+
+      const updateNavigationButtonClass = (button) => {
+        button.disabled
+          ? back.classList.remove("hover:bg-gray-200")
+          : back.classList.add("hover:bg-gray-200");
+        button.disabled
+          ? back.classList.add("text-gray-400")
+          : back.classList.remove("text-gray-400");
+      };
 
       const handleBackClick = async () => {
         const uri = history.back();
