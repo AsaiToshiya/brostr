@@ -168,22 +168,6 @@
         );
       };
 
-      const unescapeXML = (xml) =>
-        xml
-          .replace(/&lt;/g, "<")
-          .replace(/&gt;/g, ">")
-          .replace(/&amp;/g, "&")
-          .replace(/&quot;/g, '"')
-          .replace(/&apos;/g, "'");
-
-      const unwrapKind30036 = (event) =>
-        event.kind == 30036
-          ? {
-              kind: parseInt(findTag(event, "k")[1]),
-              content: JSON.parse(event.content).content,
-            }
-          : event;
-
       const open = async (uri) => {
         const nip19 = uri.replace(/^nostr:/, "");
 
@@ -216,6 +200,22 @@
             ? await normalizeHtml(content)
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
       };
+
+      const unescapeXML = (xml) =>
+        xml
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">")
+          .replace(/&amp;/g, "&")
+          .replace(/&quot;/g, '"')
+          .replace(/&apos;/g, "'");
+
+      const unwrapKind30036 = (event) =>
+        event.kind == 30036
+          ? {
+              kind: parseInt(findTag(event, "k")[1]),
+              content: JSON.parse(event.content).content,
+            }
+          : event;
 
       const handleBackClick = async () => {
         const uri = history.back();
