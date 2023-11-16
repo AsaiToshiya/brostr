@@ -6,6 +6,10 @@
 
 <p align="center">A Nostr URI native browser.</p>
 
+## Screenshot
+
+![screenshot.png](screenshot.png)
+
 ## Examples
 
 ### HTML (kind `5392`/`35392`)
