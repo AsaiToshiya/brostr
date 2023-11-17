@@ -229,8 +229,8 @@
       };
 
       const handleNostrLinkClick = async (event) => {
-        await open(event.target.href);
         event.preventDefault();
+        await open(event.target.href);
       };
 
       const history = {
