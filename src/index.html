@@ -209,11 +209,11 @@
 
       const updateNavigationButtonClass = (button) => {
         button.disabled
-          ? back.classList.remove("hover:bg-gray-200")
-          : back.classList.add("hover:bg-gray-200");
+          ? button.classList.remove("hover:bg-gray-200")
+          : button.classList.add("hover:bg-gray-200");
         button.disabled
-          ? back.classList.add("text-gray-400")
-          : back.classList.remove("text-gray-400");
+          ? button.classList.add("text-gray-400")
+          : button.classList.remove("text-gray-400");
       };
 
       const handleBackClick = async () => {
