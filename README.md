@@ -4,11 +4,19 @@
 
 <h1 align="center">Brostr</h1>
 
-<p align="center">A Nostr URI native browser.</p>
+<p align="center">A native browser for the web content on Nostr.</p>
+
+## Features
+
+- Direct access to the web content on Nostr without the web server.
 
 ## Screenshot
 
 ![screenshot.png](screenshot.png)
+
+## Install
+
+Download the binary from the [release page](https://github.com/AsaiToshiya/brostr/releases/latest), or use it directly in the browser without downloading by visiting https://asaitoshiya.github.io/brostr/src/.
 
 ## Examples
 
