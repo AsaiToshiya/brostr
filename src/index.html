@@ -81,6 +81,18 @@
         "wss://r.hostr.cc",
       ];
 
+      const convertUrlsToProxyUrl = (document, proxyUrl) => {
+        [...document.querySelectorAll("script, link, img")]
+          .filter((el) => el.getAttribute("src") || el.getAttribute("href"))
+          .forEach((el) => {
+            const originalValue =
+              el.getAttribute("src") || el.getAttribute("href");
+            const newUrl = new URL(originalValue, proxyUrl);
+            el.src && (el.src = newUrl);
+            el.href && (el.href = newUrl);
+          });
+      };
+
       const replaceNip21ToResource = async (document) => {
         const events = await fetchResourceEvents(document);
 
@@ -150,12 +162,24 @@
       const findTag = (event, tagName) =>
         event?.tags.find((tag) => tag[0] == tagName);
 
-      const normalizeHtml = async (content) => {
-        virtualDom.srcdoc = content;
+      const normalizeHtml = async (event) => {
+        const proxyTag = findTag(event, "proxy");
+        const isWebProxy = proxyTag?.[2] == "web";
+
+        virtualDom.srcdoc = isWebProxy
+          ? await (await fetch(proxyTag[1])).text()
+          : event.content;
         return new Promise(
           (resolve) =>
             (virtualDom.onload = async () => {
-              await replaceNip21ToResource(virtualDom.contentWindow.document);
+              isWebProxy
+                ? convertUrlsToProxyUrl(
+                    virtualDom.contentWindow.document,
+                    proxyTag[1]
+                  )
+                : await replaceNip21ToResource(
+                    virtualDom.contentWindow.document
+                  );
 
               resolve(
                 unescapeXML(
@@ -183,11 +207,14 @@
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
 
-        const { kind, content } = unwrapKind30036(event);
+        const { kind, content, tags } = unwrapKind30036(event);
 
         iframe.srcdoc =
           kind == 5392 || kind == 35392
-            ? await normalizeHtml(content)
+            ? await normalizeHtml({
+                content,
+                tags,
+              })
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
       };
 
@@ -200,12 +227,7 @@
           .replace(/&apos;/g, "'");
 
       const unwrapKind30036 = (event) =>
-        event.kind == 30036
-          ? {
-              kind: parseInt(findTag(event, "k")[1]),
-              content: JSON.parse(event.content).content,
-            }
-          : event;
+        event.kind == 30036 ? JSON.parse(event.content) : event;
 
       const updateNavigationButtonClass = (button) => {
         button.disabled
