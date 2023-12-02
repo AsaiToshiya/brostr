@@ -207,14 +207,11 @@
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
 
-        const { kind, content, tags } = unwrapKind30036(event);
+        const unwrappedEvent = unwrapKind30036(event);
 
         iframe.srcdoc =
-          kind == 5392 || kind == 35392
-            ? await normalizeHtml({
-                content,
-                tags,
-              })
+          unwrappedEvent.kind == 5392 || unwrappedEvent.kind == 35392
+            ? await normalizeHtml(unwrappedEvent)
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
       };
 
