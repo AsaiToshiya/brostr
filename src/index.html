@@ -64,9 +64,31 @@
       >
         Go
       </button>
+      <button
+        id="menu"
+        onclick="handleMenuClick(event)"
+        class="w-8 h-8 rounded-full ml-2 hover:bg-gray-200"
+      >
+        <i class="fas fa-ellipsis-vertical"></i>
+      </button>
     </div>
     <iframe id="iframe" class="grow m-0 p-0"></iframe>
     <iframe id="virtualDom" class="hidden" sandbox="allow-same-origin"></iframe>
+
+    <div
+      id="dropdown"
+      class="absolute z-10 invisible border border-gray-300 bg-white rounded-lg shadow"
+    >
+      <ul class="py-2">
+        <li>
+          <a
+            class="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+            onclick="handleAboutBrostrClick(event)"
+            >About Brostr</a
+          >
+        </li>
+      </ul>
+    </div>
 
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <script>
@@ -162,6 +184,10 @@
       const findTag = (event, tagName) =>
         event?.tags.find((tag) => tag[0] == tagName);
 
+      const hideDropdown = () =>
+        !dropdown.classList.contains("invisible") &&
+        dropdown.classList.add("invisible");
+
       const normalizeHtml = async (event) => {
         const proxyTag = findTag(event, "proxy");
         const isWebProxy = proxyTag?.[2] == "web";
@@ -235,6 +261,13 @@
           : button.classList.remove("text-gray-400");
       };
 
+      const handleAboutBrostrClick = () => {
+        open(
+          "nevent1qqst7mtcr7smjue7qgn4m0we5p5juhh93ejsxer2sg4eexzkzs65luchfpxzx"
+        );
+        return false;
+      };
+
       const handleBackClick = async () => {
         const uri = history.back();
         await open(uri);
@@ -245,6 +278,14 @@
       const handleForwardClick = async () => {
         const uri = history.forward();
         await open(uri);
+      };
+
+      const handleMenuClick = (event) => {
+        event.stopPropagation();
+        const buttonRect = menu.getBoundingClientRect();
+        dropdown.style.top = `${buttonRect.bottom}px`;
+        dropdown.style.left = `${window.innerWidth - dropdown.offsetWidth}px`;
+        dropdown.classList.toggle("invisible");
       };
 
       const handleNostrLinkClick = async (event) => {
@@ -290,6 +331,9 @@
             .forEach((a) => a.addEventListener("click", handleNostrLinkClick)),
         2000
       );
+
+      window.addEventListener("resize", hideDropdown);
+      document.addEventListener("click", hideDropdown);
     </script>
   </body>
 </html>
