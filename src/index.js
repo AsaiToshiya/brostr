@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
 
 const isDev = process.env.NODE_ENV === "development";
@@ -26,6 +26,11 @@ const createWindow = () => {
   isDev && mainWindow.webContents.openDevTools();
 
   !isDev && mainWindow.removeMenu();
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: "deny" };
+  });
 };
 
 // This method will be called when Electron has finished

@@ -280,6 +280,11 @@
         await open(uri);
       };
 
+      const handleLinkClick = async (event) => {
+        event.preventDefault();
+        window.open(event.target.href);
+      };
+
       const handleMenuClick = (event) => {
         event.stopPropagation();
         const buttonRect = menu.getBoundingClientRect();
@@ -327,8 +332,15 @@
       setInterval(
         () =>
           iframe.contentWindow.document
-            .querySelectorAll("a[href^='nostr:']")
-            .forEach((a) => a.addEventListener("click", handleNostrLinkClick)),
+            .querySelectorAll("a")
+            .forEach((a) =>
+              a.addEventListener(
+                "click",
+                a.href.startsWith("nostr:")
+                  ? handleNostrLinkClick
+                  : handleLinkClick
+              )
+            ),
         2000
       );
 
