@@ -209,9 +209,9 @@
 
               resolve(
                 unescapeXML(
-                  new XMLSerializer().serializeToString(
-                    virtualDom.contentWindow.document
-                  )
+                  new XMLSerializer()
+                    .serializeToString(virtualDom.contentWindow.document)
+                    .replace(/&/g, "&amp;")
                 )
               );
             })
