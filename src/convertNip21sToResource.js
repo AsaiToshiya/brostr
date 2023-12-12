@@ -25,3 +25,5 @@ const convertNip21sToResource = async (document) => {
 
 const findTag = (event, tagName) =>
   event?.tags.find((tag) => tag[0] == tagName);
+
+module.exports = convertNip21sToResource;
