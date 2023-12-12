@@ -22,3 +22,6 @@ const convertNip21sToResource = async (document) => {
         (img.src = `data:${typeTag[1]};base64,${event.content}`);
   });
 };
+
+const findTag = (event, tagName) =>
+  event?.tags.find((tag) => tag[0] == tagName);
