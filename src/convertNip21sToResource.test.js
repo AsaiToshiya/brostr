@@ -81,3 +81,39 @@ test("convertNip21sToResource", async () => {
     "data:text/javascript;base64,Y29uc3QgaGVhZGluZyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJ2gxJyk7CmxldCBjb2xvckNoYW5nZUludGVydmFsOwoKZnVuY3Rpb24gY2hhbmdlQ29sb3IoKSB7CiAgY29uc3QgcmFuZG9tQ29sb3IgPSBnZXRSYW5kb21Db2xvcigpOwogIGhlYWRpbmcuc3R5bGUuY29sb3IgPSByYW5kb21Db2xvcjsKfQoKZnVuY3Rpb24gZ2V0UmFuZG9tQ29sb3IoKSB7CiAgY29uc3QgbGV0dGVycyA9ICcwMTIzNDU2Nzg5QUJDREVGJzsKICBsZXQgY29sb3IgPSAnIyc7CiAgZm9yIChsZXQgaSA9IDA7IGkgPCA2OyBpKyspIHsKICAgIGNvbG9yICs9IGxldHRlcnNbTWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpICogMTYpXTsKICB9CiAgcmV0dXJuIGNvbG9yOwp9Cgp3aW5kb3cub25sb2FkID0gKCkgPT4gewogIGNvbG9yQ2hhbmdlSW50ZXJ2YWwgPSBzZXRJbnRlcnZhbChjaGFuZ2VDb2xvciwgMTAwMCk7Cn07CgpzZXRUaW1lb3V0KCgpID0+IHsKICBjbGVhckludGVydmFsKGNvbG9yQ2hhbmdlSW50ZXJ2YWwpOwp9LCAxMDAwMCk7Cg=="
   );
 });
+
+test("kind 1064", async () => {
+  fetchResourceEvents = async () =>
+    new Promise((resolve) =>
+      resolve({
+        "nostr:nevent1qqswkp8vt4ucp6wjazhxd7dvy3cv2vkr06wglv4vzh8u6jesraahamq7n6hp6":
+          {
+            "kind": 1064,
+            "created_at": 1703169605,
+            "tags": [
+              [
+                "type",
+                "image/jpeg"
+              ],
+              [
+                "p",
+                "0a2f19dc1a185792c3b0376f1d7f9971295e8932966c397935a5dddd1451a25a"
+              ]
+            ],
+            "content": "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=",
+            "pubkey": "0a2f19dc1a185792c3b0376f1d7f9971295e8932966c397935a5dddd1451a25a",
+            "id": "eb04ec5d7980e9d2e8ae66f9ac2470c532c37e9c8fb2ac15cfcd4b301f7b7eec",
+            "sig": "bf92b3e13de832e6fb91368a8a9cad3c979014b86df90bf4ca08426876f179bbcb3571729275e92edcc8722979fd4edc975aa77a146ef4d524d7c5b2db8d02ab"
+          },
+      })
+    );
+
+  document.body.innerHTML =
+    '<img src="nostr:nevent1qqswkp8vt4ucp6wjazhxd7dvy3cv2vkr06wglv4vzh8u6jesraahamq7n6hp6">';
+
+  await convertNip21sToResource(document);
+
+  expect(document.querySelector("img").src).toEqual(
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA="
+  );
+});
