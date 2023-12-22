@@ -3,23 +3,34 @@ const convertNip21sToResource = async (document) => {
 
   [
     ...document.querySelectorAll(
-      "script[src^='nostr:'], link[href^='nostr:']"
+      "script[src^='nostr:'], link[href^='nostr:'], img[src^='nostr:']"
     ),
   ].forEach((el) => {
     const nip21 = el.src || el.href;
     const event = events[nip21];
-    const data = btoa(unescape(encodeURIComponent(event.content)));
-    el.src && (el.src = `data:text/javascript;base64,${data}`);
-    el.href && (el.href = `data:text/css;base64,${data}`);
-  });
-  [...document.querySelectorAll("img[src^='nostr:']")].forEach((img) => {
-    const nip21 = img.src;
-    const event = events[nip21];
-    const typeTag = findTag(event, "type");
-    event?.kind == 1063
-      ? (img.src = findTag(event, "url")[1])
-      : typeTag &&
-        (img.src = `data:${typeTag[1]};base64,${event.content}`);
+    const type =
+      event?.kind == 1064
+        ? findTag(event, "type")[1]
+        : event?.kind == 5393 || event?.kind == 35393
+        ? "text/css"
+        : event?.kind == 5394 || event?.kind == 35394
+        ? "text/javascript"
+        : null;
+    const base64 =
+      event?.kind == 1064
+        ? event.content
+        : event?.kind == 5393 ||
+          event?.kind == 35393 ||
+          event?.kind == 5394 ||
+          event?.kind == 35394
+        ? btoa(unescape(encodeURIComponent(event.content)))
+        : null;
+    const value =
+      event?.kind == 1063
+        ? findTag(event, "url")[1]
+        : `data:${type};base64,${base64}`;
+    el.src && (el.src = value);
+    el.href && (el.href = value);
   });
 };
 
