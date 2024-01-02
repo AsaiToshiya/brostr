@@ -34,7 +34,7 @@
     />
   </head>
   <body class="flex flex-col h-full m-0 p-0 w-full">
-    <div class="flex p-2 border-b border-gray-300">
+    <div class="flex p-2 border-gray-300">
       <button
         id="back"
         onclick="handleBackClick()"
@@ -70,6 +70,14 @@
         class="w-8 h-8 rounded-full ml-2 hover:bg-gray-200"
       >
         <i class="fas fa-ellipsis-vertical"></i>
+      </button>
+    </div>
+    <div class="flex pb-2 px-2 border-b border-gray-300">
+      <button
+        onclick="handleBookmarkClick()"
+        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200"
+      >
+        <i class="fas fa-globe-americas me-2"></i>Broogle
       </button>
     </div>
     <iframe id="iframe" class="grow m-0 p-0"></iframe>
@@ -244,6 +252,13 @@
       const handleBackClick = async () => {
         const uri = history.back();
         await open(uri);
+      };
+
+      const handleBookmarkClick = () => {
+        open(
+          "naddr1qqrkyun0dankcegzyq9z7xwurgv90ykrkqmk78tln9cjjh5fx2txcwtexkjamhg52x395qcyqqqg5sq7raumy"
+        );
+        return false;
       };
 
       const handleClick = async () => await open(uri.value);
