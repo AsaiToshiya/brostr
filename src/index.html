@@ -217,10 +217,8 @@
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
 
-        const unwrappedEvent = unwrapKind30036(event);
-
         iframe.srcdoc =
-          unwrappedEvent.kind == 5392 || unwrappedEvent.kind == 35392
+          event.kind == 5392 || event.kind == 35392
             ? await normalizeHtml(unwrappedEvent)
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
       };
@@ -232,9 +230,6 @@
           .replace(/&amp;/g, "&")
           .replace(/&quot;/g, '"')
           .replace(/&apos;/g, "'");
-
-      const unwrapKind30036 = (event) =>
-        event.kind == 30036 ? JSON.parse(event.content) : event;
 
       const updateNavigationButtonClass = (button) => {
         button.disabled
