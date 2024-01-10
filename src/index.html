@@ -219,7 +219,7 @@
 
         iframe.srcdoc =
           event.kind == 5392 || event.kind == 35392
-            ? await normalizeHtml(unwrappedEvent)
+            ? await normalizeHtml(event)
             : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
       };
 
