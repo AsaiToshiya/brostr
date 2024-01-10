@@ -205,22 +205,27 @@
       const open = async (uri) => {
         const nip19 = uri.replace(/^nostr:/, "");
 
-        history.push(nip19);
-
-        back.disabled = !history.canBack();
-        updateNavigationButtonClass(back);
-        forward.disabled = !history.canForward();
-        updateNavigationButtonClass(forward);
-        document.querySelector("#uri").value = nip19;
-
         const filter = createFilter(nip19);
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
 
-        iframe.srcdoc =
-          event.kind == 5392 || event.kind == 35392
-            ? await normalizeHtml(event)
-            : `<pre>${JSON.stringify(event, null, 2)}</pre>`;
+        event.kind == 5392 || event.kind == 35392
+          ? (async () => {
+              history.push(nip19);
+
+              back.disabled = !history.canBack();
+              updateNavigationButtonClass(back);
+              forward.disabled = !history.canForward();
+              updateNavigationButtonClass(forward);
+              document.querySelector("#uri").value = nip19;
+
+              iframe.srcdoc = await normalizeHtml(event);
+            })()
+          : window.open(
+              `https://njump.me/${window.NostrTools.nip19.neventEncode({
+                id: event.id,
+              })}`
+            );
       };
 
       const unescapeXML = (xml) =>
