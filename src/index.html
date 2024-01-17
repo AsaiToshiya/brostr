@@ -204,6 +204,7 @@
         const filter = createFilter(nip19);
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
+        pool.close(relays);
 
         event.kind == 5392 || event.kind == 35392
           ? (async () => {
