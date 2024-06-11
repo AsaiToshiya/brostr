@@ -4,7 +4,7 @@
 
 <h1 align="center">Brostr</h1>
 
-<p align="center">A native browser for the web content on Nostr.</p>
+<p align="center">A native browser for the content on Nostr.</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-0.3.0-blue">
@@ -12,7 +12,7 @@
 
 ## Features
 
-- Direct access to the web content on Nostr without the web server.
+- Direct access to the content on Nostr without the web server.
 
 ## Screenshot
 
