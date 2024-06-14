@@ -16,7 +16,7 @@
 
 ## Screenshot
 
-![](screenshot.png)
+![](html-content.png)
 
 ## Install
 
