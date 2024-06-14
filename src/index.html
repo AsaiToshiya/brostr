@@ -168,6 +168,28 @@
         !dropdown.classList.contains("invisible") &&
         dropdown.classList.add("invisible");
 
+      const loadOracolo = async (event) => {
+        const contentWindow = virtualDom.contentWindow;
+        contentWindow.location.replace("../oracolo/dist/index.html");
+        return new Promise(
+          (resolve) =>
+            (virtualDom.onload = () => {
+              const document = contentWindow.document;
+              const author = document.querySelector("meta[name='author']");
+              const comments = document.querySelector("meta[name='comments']");
+              author.setAttribute(
+                "value",
+                window.NostrTools.nip19.npubEncode(event.pubkey)
+              );
+              comments.setAttribute("value", "");
+
+              resolve(
+                unescapeXML(new XMLSerializer().serializeToString(document))
+              );
+            })
+        );
+      };
+
       const normalizeHtml = async (event) => {
         const proxyTag = findTag(event, "proxy");
         const isWebProxy = proxyTag?.[2] == "web";
@@ -206,7 +228,7 @@
         const event = await pool.get(relays, filter);
         pool.close(relays);
 
-        event.kind == 5392 || event.kind == 35392
+        event.kind == 5392 || event.kind == 35392 || event.kind == 30023
           ? (async () => {
               history.push(nip19);
 
@@ -216,7 +238,15 @@
               updateNavigationButtonClass(forward);
               document.querySelector("#uri").value = nip19;
 
-              iframe.srcdoc = await normalizeHtml(event);
+              event.kind == 5392 || event.kind == 35392
+                ? (iframe.srcdoc = await normalizeHtml(event))
+                : (async () => {
+                    iframe.contentWindow.location.replace("about:blank");
+                    iframe.srcdoc = await loadOracolo(event);
+                    iframe.contentWindow.location.replace(
+                      `about:srcdoc#${event.id}`
+                    );
+                  })();
             })()
           : window.open(
               `https://njump.me/${window.NostrTools.nip19.neventEncode({
@@ -270,7 +300,8 @@
 
       const handleLinkClick = async (event) => {
         event.preventDefault();
-        window.open(event.target.href);
+        const href = event.target.href;
+        href && window.open(event.target.href);
       };
 
       const handleMenuClick = (event) => {
