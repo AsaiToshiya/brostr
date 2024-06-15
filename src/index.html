@@ -261,13 +261,7 @@
 
               event.kind == 5392 || event.kind == 35392
                 ? await renderHtmlContent(event)
-                : (async () => {
-                    iframe.contentWindow.location.replace("about:blank");
-                    iframe.srcdoc = await loadOracolo(event);
-                    iframe.contentWindow.location.replace(
-                      `about:srcdoc#${event.id}`
-                    );
-                  })();
+                : await renderLongFormContent(event);
 
               // nocomment
               const script = Object.assign(document.createElement("script"), {
@@ -306,6 +300,12 @@
 
       const renderHtmlContent = async (event) =>
         (iframe.srcdoc = await normalizeHtml(event));
+
+      const renderLongFormContent = async (event) => {
+        iframe.contentWindow.location.replace("about:blank");
+        iframe.srcdoc = await loadOracolo(event);
+        iframe.contentWindow.location.replace(`about:srcdoc#${event.id}`);
+      };
 
       const handleAboutBrostrClick = () => {
         open(
