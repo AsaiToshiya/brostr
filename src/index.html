@@ -247,7 +247,11 @@
         const event = await pool.get(relays, filter);
         pool.close(relays);
 
-        event.kind == 5392 || event.kind == 35392 || event.kind == 30023
+        event.kind == 5392 ||
+        event.kind == 35392 ||
+        event.kind == 30023 ||
+        ((event.kind == 1063 || event.kind == 1064) &&
+          findTag(event, "m")[1].startsWith("image/"))
           ? (async () => {
               history.push(nip19);
 
@@ -261,7 +265,9 @@
 
               event.kind == 5392 || event.kind == 35392
                 ? await renderHtmlContent(event)
-                : await renderLongFormContent(event);
+                : event.kind == 30023
+                ? await renderLongFormContent(event)
+                : await renderImage(event);
 
               // nocomment
               const script = Object.assign(document.createElement("script"), {
@@ -300,6 +306,23 @@
 
       const renderHtmlContent = async (event) =>
         (iframe.srcdoc = await normalizeHtml(event));
+
+      const renderImage = async (event) => {
+        const mimeType = findTag(event, "m")[1];
+        const url =
+          event.kind == 1063
+            ? findTag(event, "url")[1]
+            : `data:${mimeType};base64,${event.content}`;
+        iframe.srcdoc = `<!DOCTYPE html>
+<html class="h-full m-0 p-0 w-full">
+  <head>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+  <\/head>
+  <body class="h-full m-0 p-0 w-full bg-black">
+    <img src="${url}" class="w-full h-full object-scale-down" \/>
+  <\/body>
+<\/html>`;
+      };
 
       const renderLongFormContent = async (event) => {
         iframe.contentWindow.location.replace("about:blank");
