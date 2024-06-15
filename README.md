@@ -13,10 +13,35 @@
 ## Features
 
 - Direct access to the content on Nostr without the web server.
+- A standardized behavior for various contents.
 
-## Screenshot
+## Supported NIPs
 
-![](html-content.png)
+- [NIP-01: Basic protocol flow description][NIP-01] (Powered by [nocomment][nocomment])
+- [NIP-19: bech32-encoded entities][NIP-19]
+- [NIP-21: `nostr:` URI scheme][NIP-21]
+- [NIP-23: Long-form Content][NIP-23] (Powered by [Oracolo][Oracolo])
+- [NIP-48: Proxy Tags][NIP-48] (Experiment)
+- [NIP-94: File Metadata][NIP-94]
+- [NIP-95: Storage and Shared File][NIP-95] (Draft)
+- [NIP-106: Decentralized Web Hosting on Nostr][NIP-106] (Draft)
+
+[NIP-01]: https://github.com/nostr-protocol/nips/blob/master/01.md
+[NIP-19]: https://github.com/nostr-protocol/nips/blob/master/19.md
+[NIP-21]: https://github.com/nostr-protocol/nips/blob/master/21.md
+[NIP-23]: https://github.com/nostr-protocol/nips/blob/master/23.md
+[NIP-48]: https://github.com/nostr-protocol/nips/blob/master/48.md
+[NIP-94]: https://github.com/nostr-protocol/nips/blob/master/94.md
+[NIP-95]: https://github.com/frbitten/nostr-nips/blob/NIP-95/95.md
+[NIP-106]: https://github.com/studiokaiji/nips/blob/master/106.md
+[nocomment]: https://github.com/fiatjaf/nocomment
+[Oracolo]: https://github.com/dtonon/oracolo
+
+## Screenshots
+
+| HTML Content                      | Long-form Content                      | Proxy                      | Image                      | Comments                      |
+| --------------------------------- | -------------------------------------- | -------------------------- | -------------------------- | ----------------------------- |
+| ![](screenshots/html-content.png) | ![](screenshots/long-form-content.png) | ![](screenshots/proxy.png) | ![](screenshots/image.png) | ![](screenshots/comments.png) |
 
 ## Install
 
@@ -103,6 +128,24 @@ Download the binary from the [release page](https://github.com/AsaiToshiya/brost
   "content": "",
   "sig": "7849442484409bfe5d2edf2d2b0e475e8952538d70f015c67ade3ff7b2e7436fc90514483e772194b92ebc3e72428e5e757740fae4e7b82b2e9fe08dfbd1a142"
 }
+```
+
+## Development
+
+### Setup
+
+```bash
+git clone https://github.com/AsaiToshiya/brostr.git
+cd brostr
+pnpm install
+curl -o oracolo/dist/index.html --create-dirs https://raw.githubusercontent.com/dtonon/oracolo/164bdace1f41da1c8810078003e3258e43b8f9cd/dist/index.html
+curl -o nocomment/embed.js --create-dirs https://nocomment.fiatjaf.com/embed.js
+```
+
+### Run
+
+```bash
+pnpm start
 ```
 
 ## License
