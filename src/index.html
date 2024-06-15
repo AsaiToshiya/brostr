@@ -260,7 +260,7 @@
               comments.innerHTML = "";
 
               event.kind == 5392 || event.kind == 35392
-                ? (iframe.srcdoc = await normalizeHtml(event))
+                ? await renderHtmlContent(event)
                 : (async () => {
                     iframe.contentWindow.location.replace("about:blank");
                     iframe.srcdoc = await loadOracolo(event);
@@ -303,6 +303,9 @@
           ? button.classList.add("text-gray-400")
           : button.classList.remove("text-gray-400");
       };
+
+      const renderHtmlContent = async (event) =>
+        (iframe.srcdoc = await normalizeHtml(event));
 
       const handleAboutBrostrClick = () => {
         open(
