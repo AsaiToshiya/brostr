@@ -74,7 +74,7 @@
     </div>
     <div class="flex pb-2 px-2 border-b border-gray-300">
       <button
-        onclick="handleBookmarkClick()"
+        onclick="handleBookmarkClick('naddr1qqrkyun0dankcegzyq9z7xwurgv90ykrkqmk78tln9cjjh5fx2txcwtexkjamhg52x395qcyqqqg5sq7raumy')"
         class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200"
       >
         <i class="fas fa-globe-americas fa-sm me-2"></i>Broogle
@@ -284,12 +284,7 @@
         await open(uri);
       };
 
-      const handleBookmarkClick = () => {
-        open(
-          "naddr1qqrkyun0dankcegzyq9z7xwurgv90ykrkqmk78tln9cjjh5fx2txcwtexkjamhg52x395qcyqqqg5sq7raumy"
-        );
-        return false;
-      };
+      const handleBookmarkClick = (uri) => open(uri);
 
       const handleClick = async () => await open(uri.value);
 
