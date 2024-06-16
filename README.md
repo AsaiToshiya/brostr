@@ -21,10 +21,10 @@
 - [NIP-19: bech32-encoded entities][NIP-19]
 - [NIP-21: `nostr:` URI scheme][NIP-21]
 - [NIP-23: Long-form Content][NIP-23] (Powered by [Oracolo][Oracolo])
-- [NIP-48: Proxy Tags][NIP-48] (Experiment)
+- [NIP-48: Proxy Tags][NIP-48] (Experimental support)
 - [NIP-94: File Metadata][NIP-94]
-- [NIP-95: Storage and Shared File][NIP-95] (Draft)
-- [NIP-106: Decentralized Web Hosting on Nostr][NIP-106] (Draft)
+- [NIP-95: Storage and Shared File][NIP-95] (Draft NIP)
+- [NIP-106: Decentralized Web Hosting on Nostr][NIP-106] (Draft NIP)
 
 [NIP-01]: https://github.com/nostr-protocol/nips/blob/master/01.md
 [NIP-19]: https://github.com/nostr-protocol/nips/blob/master/19.md
