@@ -270,15 +270,7 @@
                 : await renderImage(event);
 
               // nocomment
-              const script = Object.assign(document.createElement("script"), {
-                src: "../nocomment/embed.js",
-                id: "nocomment",
-              });
-              script.dataset.customBase = nip19;
-              script.dataset.owner = window.NostrTools.nip19.npubEncode(
-                event.pubkey
-              );
-              comments.appendChild(script);
+              renderNocomment(nip19, event);
             })()
           : window.open(
               `https://njump.me/${window.NostrTools.nip19.neventEncode({
@@ -328,6 +320,16 @@
         iframe.contentWindow.location.replace("about:blank");
         iframe.srcdoc = await loadOracolo(event);
         iframe.contentWindow.location.replace(`about:srcdoc#${event.id}`);
+      };
+
+      const renderNocomment = (nip19, event) => {
+        const script = Object.assign(document.createElement("script"), {
+          src: "../nocomment/embed.js",
+          id: "nocomment",
+        });
+        script.dataset.customBase = nip19;
+        script.dataset.owner = window.NostrTools.nip19.npubEncode(event.pubkey);
+        comments.appendChild(script);
       };
 
       const handleAboutBrostrClick = () => {
