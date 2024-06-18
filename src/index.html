@@ -209,36 +209,6 @@
         );
       };
 
-      const normalizeHtml = async (event) => {
-        const proxyTag = findTag(event, "proxy");
-        const isWebProxy = proxyTag?.[2] == "web";
-
-        virtualDom.srcdoc = isWebProxy
-          ? await (await fetch(proxyTag[1])).text()
-          : event.content;
-        return new Promise(
-          (resolve) =>
-            (virtualDom.onload = async () => {
-              isWebProxy
-                ? convertUrlsToProxyUrl(
-                    virtualDom.contentWindow.document,
-                    proxyTag[1]
-                  )
-                : await convertNip21sToResource(
-                    virtualDom.contentWindow.document
-                  );
-
-              resolve(
-                unescapeXML(
-                  new XMLSerializer().serializeToString(
-                    virtualDom.contentWindow.document
-                  )
-                )
-              );
-            })
-        );
-      };
-
       const open = async (uri) => {
         const nip19 = uri.replace(/^nostr:/, "");
 
@@ -296,8 +266,39 @@
           : button.classList.remove("text-gray-400");
       };
 
-      const renderHtmlContent = async (event) =>
-        (iframe.srcdoc = await normalizeHtml(event));
+      const renderHtmlContent = async (event) => {
+        const normalizeHtml = async (event) => {
+          const proxyTag = findTag(event, "proxy");
+          const isWebProxy = proxyTag?.[2] == "web";
+
+          virtualDom.srcdoc = isWebProxy
+            ? await (await fetch(proxyTag[1])).text()
+            : event.content;
+          return new Promise(
+            (resolve) =>
+              (virtualDom.onload = async () => {
+                isWebProxy
+                  ? convertUrlsToProxyUrl(
+                      virtualDom.contentWindow.document,
+                      proxyTag[1]
+                    )
+                  : await convertNip21sToResource(
+                      virtualDom.contentWindow.document
+                    );
+
+                resolve(
+                  unescapeXML(
+                    new XMLSerializer().serializeToString(
+                      virtualDom.contentWindow.document
+                    )
+                  )
+                );
+              })
+          );
+        };
+
+        iframe.srcdoc = await normalizeHtml(event);
+      };
 
       const renderImage = async (event) => {
         const mimeType = findTag(event, "m")[1];
