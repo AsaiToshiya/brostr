@@ -187,28 +187,6 @@
         !dropdown.classList.contains("invisible") &&
         dropdown.classList.add("invisible");
 
-      const loadOracolo = async (event) => {
-        const contentWindow = virtualDom.contentWindow;
-        contentWindow.location.replace("../oracolo/dist/index.html");
-        return new Promise(
-          (resolve) =>
-            (virtualDom.onload = () => {
-              const document = contentWindow.document;
-              const author = document.querySelector("meta[name='author']");
-              const comments = document.querySelector("meta[name='comments']");
-              author.setAttribute(
-                "value",
-                window.NostrTools.nip19.npubEncode(event.pubkey)
-              );
-              comments.setAttribute("value", "");
-
-              resolve(
-                unescapeXML(new XMLSerializer().serializeToString(document))
-              );
-            })
-        );
-      };
-
       const isSupported = ({ type }) => type == "nevent" || type == "naddr";
 
       const open = async (uri) => {
@@ -325,6 +303,30 @@
       };
 
       const renderLongFormContent = async (event) => {
+        const loadOracolo = async (event) => {
+          const contentWindow = virtualDom.contentWindow;
+          contentWindow.location.replace("../oracolo/dist/index.html");
+          return new Promise(
+            (resolve) =>
+              (virtualDom.onload = () => {
+                const document = contentWindow.document;
+                const author = document.querySelector("meta[name='author']");
+                const comments = document.querySelector(
+                  "meta[name='comments']"
+                );
+                author.setAttribute(
+                  "value",
+                  window.NostrTools.nip19.npubEncode(event.pubkey)
+                );
+                comments.setAttribute("value", "");
+
+                resolve(
+                  unescapeXML(new XMLSerializer().serializeToString(document))
+                );
+              })
+          );
+        };
+
         iframe.contentWindow.location.replace("about:blank");
         iframe.srcdoc = await loadOracolo(event);
         iframe.contentWindow.location.replace(`about:srcdoc#${event.id}`);
