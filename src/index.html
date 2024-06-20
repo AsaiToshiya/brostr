@@ -210,9 +210,9 @@
       };
 
       const open = async (uri) => {
-        const nip19 = uri.replace(/^nostr:/, "");
+        const nip19String = uri.replace(/^nostr:/, "");
 
-        const filter = createFilter(nip19);
+        const filter = createFilter(nip19String);
         const pool = new window.NostrTools.SimplePool();
         const event = await pool.get(relays, filter);
         pool.close(relays);
@@ -223,13 +223,13 @@
         ((event.kind == 1063 || event.kind == 1064) &&
           findTag(event, "m")[1].startsWith("image/"))
           ? (async () => {
-              history.push(nip19);
+              history.push(nip19String);
 
               back.disabled = !history.canBack();
               updateNavigationButtonClass(back);
               forward.disabled = !history.canForward();
               updateNavigationButtonClass(forward);
-              document.querySelector("#uri").value = nip19;
+              document.querySelector("#uri").value = nip19String;
 
               comments.innerHTML = "";
 
@@ -240,7 +240,7 @@
                 : await renderImage(event);
 
               // nocomment
-              renderNocomment(nip19, event);
+              renderNocomment(nip19String, event);
             })()
           : window.open(
               `https://njump.me/${window.NostrTools.nip19.neventEncode({
