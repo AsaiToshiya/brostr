@@ -209,44 +209,51 @@
         );
       };
 
+      const isSupported = ({ type }) => type == "nevent" || type == "naddr";
+
       const open = async (uri) => {
         const nip19String = uri.replace(/^nostr:/, "");
+        const nip19 = window.NostrTools.nip19.decode(nip19String);
 
-        const filter = createFilter(nip19String);
-        const pool = new window.NostrTools.SimplePool();
-        const event = await pool.get(relays, filter);
-        pool.close(relays);
-
-        event.kind == 5392 ||
-        event.kind == 35392 ||
-        event.kind == 30023 ||
-        ((event.kind == 1063 || event.kind == 1064) &&
-          findTag(event, "m")[1].startsWith("image/"))
+        isSupported(nip19)
           ? (async () => {
-              history.push(nip19String);
+              const filter = createFilter(nip19String);
+              const pool = new window.NostrTools.SimplePool();
+              const event = await pool.get(relays, filter);
+              pool.close(relays);
 
-              back.disabled = !history.canBack();
-              updateNavigationButtonClass(back);
-              forward.disabled = !history.canForward();
-              updateNavigationButtonClass(forward);
-              document.querySelector("#uri").value = nip19String;
+              event.kind == 5392 ||
+              event.kind == 35392 ||
+              event.kind == 30023 ||
+              ((event.kind == 1063 || event.kind == 1064) &&
+                findTag(event, "m")[1].startsWith("image/"))
+                ? (async () => {
+                    history.push(nip19String);
 
-              comments.innerHTML = "";
+                    back.disabled = !history.canBack();
+                    updateNavigationButtonClass(back);
+                    forward.disabled = !history.canForward();
+                    updateNavigationButtonClass(forward);
+                    document.querySelector("#uri").value = nip19String;
 
-              event.kind == 5392 || event.kind == 35392
-                ? await renderHtmlContent(event)
-                : event.kind == 30023
-                ? await renderLongFormContent(event)
-                : await renderImage(event);
+                    comments.innerHTML = "";
 
-              // nocomment
-              renderNocomment(nip19String, event);
+                    event.kind == 5392 || event.kind == 35392
+                      ? await renderHtmlContent(event)
+                      : event.kind == 30023
+                      ? await renderLongFormContent(event)
+                      : await renderImage(event);
+
+                    // nocomment
+                    renderNocomment(nip19String, event);
+                  })()
+                : window.open(
+                    `https://njump.me/${window.NostrTools.nip19.neventEncode({
+                      id: event.id,
+                    })}`
+                  );
             })()
-          : window.open(
-              `https://njump.me/${window.NostrTools.nip19.neventEncode({
-                id: event.id,
-              })}`
-            );
+          : window.open(`https://njump.me/${nip19String}`);
       };
 
       const unescapeXML = (xml) =>
