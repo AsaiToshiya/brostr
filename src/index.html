@@ -130,6 +130,13 @@
         "wss://r.hostr.cc",
       ];
 
+      const canRender = (event) =>
+        event.kind == 5392 ||
+        event.kind == 35392 ||
+        event.kind == 30023 ||
+        ((event.kind == 1063 || event.kind == 1064) &&
+          findTag(event, "m")[1].startsWith("image/"));
+
       const convertUrlsToProxyUrl = (document, proxyUrl) => {
         [...document.querySelectorAll("script, link, img")]
           .filter((el) => el.getAttribute("src") || el.getAttribute("href"))
@@ -200,11 +207,7 @@
               const event = await pool.get(relays, filter);
               pool.close(relays);
 
-              event.kind == 5392 ||
-              event.kind == 35392 ||
-              event.kind == 30023 ||
-              ((event.kind == 1063 || event.kind == 1064) &&
-                findTag(event, "m")[1].startsWith("image/"))
+              canRender(event)
                 ? (async () => {
                     history.push(nip19String);
 
