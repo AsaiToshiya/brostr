@@ -137,18 +137,6 @@
         ((event.kind == 1063 || event.kind == 1064) &&
           findTag(event, "m")[1].startsWith("image/"));
 
-      const convertUrlsToProxyUrl = (document, proxyUrl) => {
-        [...document.querySelectorAll("script, link, img")]
-          .filter((el) => el.getAttribute("src") || el.getAttribute("href"))
-          .forEach((el) => {
-            const originalValue =
-              el.getAttribute("src") || el.getAttribute("href");
-            const newUrl = new URL(originalValue, proxyUrl);
-            el.src && (el.src = newUrl);
-            el.href && (el.href = newUrl);
-          });
-      };
-
       const createFilter = (uri) => {
         const { type, data } = window.NostrTools.nip19.decode(
           uri.replace(/^nostr:/, "")
@@ -258,6 +246,18 @@
       };
 
       const renderHtmlContent = async (event) => {
+        const convertUrlsToProxyUrl = (document, proxyUrl) => {
+          [...document.querySelectorAll("script, link, img")]
+            .filter((el) => el.getAttribute("src") || el.getAttribute("href"))
+            .forEach((el) => {
+              const originalValue =
+                el.getAttribute("src") || el.getAttribute("href");
+              const newUrl = new URL(originalValue, proxyUrl);
+              el.src && (el.src = newUrl);
+              el.href && (el.href = newUrl);
+            });
+        };
+
         const normalizeHtml = async (event) => {
           const proxyTag = findTag(event, "proxy");
           const isWebProxy = proxyTag?.[2] == "web";
