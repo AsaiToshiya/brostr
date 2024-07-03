@@ -120,7 +120,7 @@
     <script src="https://unpkg.com/nostr-tools@1.17.0/lib/nostr.bundle.js"></script>
     <script src="convertNip21sToResource.js"></script>
     <script>
-      const relays = [
+      const defaultRelays = [
         "wss://nos.lol",
         "wss://nostr.bitcoiner.social",
         "wss://nostr.mom",
@@ -174,8 +174,8 @@
 
         const pool = new window.NostrTools.SimplePool();
         const filters = nip21s.map(createFilter);
-        const events = await pool.list(relays, filters);
-        await pool.close(relays);
+        const events = await pool.list(defaultRelays, filters);
+        await pool.close(defaultRelays);
 
         return nip21s.reduce((acc, obj) => {
           const { type, data } = window.NostrTools.nip21.parse(obj).decoded;
@@ -204,8 +204,8 @@
           ? (async () => {
               const filter = createFilter(nip19String);
               const pool = new window.NostrTools.SimplePool();
-              const event = await pool.get(relays, filter);
-              pool.close(relays);
+              const event = await pool.get(defaultRelays, filter);
+              pool.close(defaultRelays);
 
               canRender(event)
                 ? (async () => {
