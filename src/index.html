@@ -204,8 +204,11 @@
           ? (async () => {
               const filter = createFilter(nip19String);
               const pool = new window.NostrTools.SimplePool();
-              const event = await pool.get(defaultRelays, filter);
-              pool.close(defaultRelays);
+              const relays = nip19.data.relays.length
+                ? nip19.data.relays
+                : defaultRelays;
+              const event = await pool.get(relays, filter);
+              pool.close(relays);
 
               canRender(event)
                 ? (async () => {
