@@ -137,11 +137,8 @@
         ((event.kind == 1063 || event.kind == 1064) &&
           findTag(event, "m")[1].startsWith("image/"));
 
-      const createFilter = (uri) => {
-        const { type, data } = window.NostrTools.nip19.decode(
-          uri.replace(/^nostr:/, "")
-        );
-        return type === "nevent"
+      const createFilter = ({ type, data }) =>
+        type === "nevent"
           ? {
               ids: [data.id],
             }
@@ -150,7 +147,6 @@
               authors: [data.pubkey],
               "#d": [data.identifier],
             };
-      };
 
       // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
       const fetchResourceEvents = async (document) => {
@@ -161,12 +157,15 @@
         ].map((el) => el.src || el.href);
 
         const pool = new window.NostrTools.SimplePool();
-        const filters = nip21s.map(createFilter);
+        const nip19s = nip21s.map(
+          (nip21) => window.NostrTools.nip21.parse(nip21).decoded
+        );
+        const filters = nip19s.map(createFilter);
         const events = await pool.list(defaultRelays, filters);
         await pool.close(defaultRelays);
 
-        return nip21s.reduce((acc, obj) => {
-          const { type, data } = window.NostrTools.nip21.parse(obj).decoded;
+        return nip21s.reduce((acc, obj, ind) => {
+          const { type, data } = nip19s[ind];
           const event = events.find((event) =>
             type === "nevent"
               ? event.id == data.id
@@ -190,7 +189,7 @@
 
         isSupported(nip19)
           ? (async () => {
-              const filter = createFilter(nip19String);
+              const filter = createFilter(nip19);
               const pool = new window.NostrTools.SimplePool();
               const relays = nip19.data.relays.length
                 ? nip19.data.relays
