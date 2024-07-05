@@ -209,11 +209,13 @@
 
                     comments.innerHTML = "";
 
-                    event.kind == 5392 || event.kind == 35392
-                      ? await renderHtmlContent(event)
-                      : event.kind == 30023
-                      ? await renderLongFormContent(event)
-                      : await renderImage(event);
+                    const render =
+                      event.kind == 5392 || event.kind == 35392
+                        ? renderHtmlContent
+                        : event.kind == 30023
+                        ? renderLongFormContent
+                        : renderImage;
+                    await render(event);
 
                     // nocomment
                     renderNocomment(nip19String, event);
