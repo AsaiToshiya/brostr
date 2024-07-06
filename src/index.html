@@ -420,13 +420,15 @@
           [
             ...iframe.contentWindow.document.querySelectorAll("a"),
             ...comments.querySelectorAll("a"),
-          ].forEach((a) =>
-            a.addEventListener(
-              "click",
-              a.href.startsWith("nostr:")
-                ? handleNostrLinkClick
-                : handleLinkClick
-            )
+          ].forEach(
+            (a) =>
+              !a.href.startsWith("javascript:") &&
+              a.addEventListener(
+                "click",
+                a.href.startsWith("nostr:")
+                  ? handleNostrLinkClick
+                  : handleLinkClick
+              )
           ),
         2000
       );
