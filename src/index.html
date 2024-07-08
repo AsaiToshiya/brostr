@@ -135,7 +135,8 @@
         event.kind == 35392 ||
         event.kind == 30023 ||
         ((event.kind == 1063 || event.kind == 1064) &&
-          findTag(event, "m")[1].startsWith("image/"));
+          findTag(event, "m")[1].startsWith("image/")) ||
+        event.kind == 64;
 
       const createFilter = ({ type, data }) =>
         type === "nevent"
@@ -214,6 +215,8 @@
                         ? renderHtmlContent
                         : event.kind == 30023
                         ? renderLongFormContent
+                        : event.kind == 64
+                        ? renderChess
                         : renderImage;
                     await render(event);
 
@@ -244,6 +247,30 @@
         button.disabled
           ? button.classList.add("text-gray-400")
           : button.classList.remove("text-gray-400");
+      };
+
+      const renderChess = async (event) => {
+        iframe.srcdoc = `<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../pgnviewer/jsPgnViewer.js"><\/script>
+  </head>
+  <body>
+    <div
+      id="fen1_board"
+      style="max-width: 940px; margin-left: auto; margin-right: auto"
+    ></div>
+    <div id="fen1" style="visibility: hidden; display: none">
+      ${event.content}
+    </div>
+    <script>
+      var brd = new Board("fen1", {
+        imagePrefix: "../pgnviewer/img/zurich/",
+      });
+      brd.init();
+    <\/script>
+  </body>
+</html>`;
       };
 
       const renderHtmlContent = async (event) => {
@@ -420,13 +447,15 @@
           [
             ...iframe.contentWindow.document.querySelectorAll("a"),
             ...comments.querySelectorAll("a"),
-          ].forEach((a) =>
-            a.addEventListener(
-              "click",
-              a.href.startsWith("nostr:")
-                ? handleNostrLinkClick
-                : handleLinkClick
-            )
+          ].forEach(
+            (a) =>
+              !a.href.startsWith("javascript:") &&
+              a.addEventListener(
+                "click",
+                a.href.startsWith("nostr:")
+                  ? handleNostrLinkClick
+                  : handleLinkClick
+              )
           ),
         2000
       );
