@@ -56,24 +56,24 @@
         type="text"
         size="50"
         value="nevent1qqst99d8u7484nv3tsnthh6xpvz0nc8fdfug9q5ch2yxwmjllfm5ccsp5602c"
-        class="w-full bg-gray-100 rounded-full py-1 px-4 mr-1 ml-2"
+        class="w-full bg-gray-100 rounded-full py-1 px-4 mr-1 ml-2 text-gray-700"
       />
       <button
         onclick="handleClick()"
-        class="px-2 py-1 hover:bg-gray-200 rounded"
+        class="px-2 py-1 hover:bg-gray-200 rounded text-gray-700"
       >
         Go
       </button>
       <button
         onclick="handleCommentClick()"
-        class="w-8 h-8 rounded-full ml-2 hover:bg-gray-200"
+        class="w-8 h-8 rounded-full ml-2 hover:bg-gray-200 text-gray-700"
       >
         <i class="fas fa-comment fa-sm"></i>
       </button>
       <button
         id="menu"
         onclick="handleMenuClick(event)"
-        class="w-8 h-8 rounded-full ml-1 hover:bg-gray-200"
+        class="w-8 h-8 rounded-full ml-1 hover:bg-gray-200 text-gray-700"
       >
         <i class="fas fa-ellipsis-vertical fa-sm"></i>
       </button>
@@ -81,13 +81,13 @@
     <div class="flex pb-2 px-2 border-b border-gray-300">
       <button
         onclick="handleBookmarkClick('naddr1qqrkyun0dankcegzyq9z7xwurgv90ykrkqmk78tln9cjjh5fx2txcwtexkjamhg52x395qcyqqqg5sq7raumy')"
-        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200 mr-1"
+        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200 mr-1 text-gray-700"
       >
         <i class="fas fa-globe-americas fa-sm me-2"></i>Broogle
       </button>
       <button
         onclick="handleBookmarkClick('naddr1qvzqqqr4gupzqwlsccluhy6xxsr6l9a9uhhxf75g85g8a709tprjcn4e42h053vaqqyrze35vscrzvfcnx3g2h')"
-        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200"
+        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200 text-gray-700"
       >
         <i class="fas fa-globe-americas fa-sm me-2"></i>How to do curation and
         businesses on Nostr
@@ -109,7 +109,7 @@
       <ul class="py-2">
         <li>
           <a
-            class="block px-4 py-2 whitespace-nowrap hover:bg-gray-200 cursor-pointer"
+            class="block px-4 py-2 whitespace-nowrap hover:bg-gray-200 cursor-pointer text-gray-700"
             onclick="handleBookmarkClick('nevent1qqst7mtcr7smjue7qgn4m0we5p5juhh93ejsxer2sg4eexzkzs65luchfpxzx')"
             >About Brostr</a
           >
@@ -247,6 +247,9 @@
         button.disabled
           ? button.classList.add("text-gray-400")
           : button.classList.remove("text-gray-400");
+        button.disabled
+          ? button.classList.remove("text-gray-700")
+          : button.classList.add("text-gray-700");
       };
 
       const renderChess = async (event) => {
