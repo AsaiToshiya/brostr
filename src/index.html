@@ -78,21 +78,7 @@
         <i class="fas fa-ellipsis-vertical fa-sm"></i>
       </button>
     </div>
-    <div class="flex pb-2 px-2 border-b border-gray-300">
-      <button
-        onclick="handleBookmarkClick('naddr1qqrkyun0dankcegzyq9z7xwurgv90ykrkqmk78tln9cjjh5fx2txcwtexkjamhg52x395qcyqqqg5sq7raumy')"
-        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200 mr-1 text-gray-700"
-      >
-        <i class="fas fa-globe-americas fa-sm me-2"></i>Broogle
-      </button>
-      <button
-        onclick="handleBookmarkClick('naddr1qvzqqqr4gupzqwlsccluhy6xxsr6l9a9uhhxf75g85g8a709tprjcn4e42h053vaqqyrze35vscrzvfcnx3g2h')"
-        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200 text-gray-700"
-      >
-        <i class="fas fa-globe-americas fa-sm me-2"></i>How to do curation and
-        businesses on Nostr
-      </button>
-    </div>
+    <div id="bookmarks" class="flex pb-2 px-2 border-b border-gray-300"></div>
     <div class="flex grow overflow-hidden">
       <iframe id="iframe" class="grow m-0 p-0"></iframe>
       <div
@@ -117,9 +103,28 @@
       </ul>
     </div>
 
+    <template id="bookmark">
+      <button
+        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200 [&:not(:last-child)]:mr-1 text-gray-700"
+      >
+        <i class="fas fa-globe-americas fa-sm me-2"></i>
+      </button>
+    </template>
+
     <script src="https://unpkg.com/nostr-tools@1.17.0/lib/nostr.bundle.js"></script>
     <script src="convertNip21sToResource.js"></script>
     <script>
+      const bookmarks = [
+        [
+          "Broogle",
+          "naddr1qqrkyun0dankcegzyq9z7xwurgv90ykrkqmk78tln9cjjh5fx2txcwtexkjamhg52x395qcyqqqg5sq7raumy",
+        ],
+        [
+          "How to do curation and businesses on Nostr",
+          "naddr1qvzqqqr4gupzqwlsccluhy6xxsr6l9a9uhhxf75g85g8a709tprjcn4e42h053vaqqyrze35vscrzvfcnx3g2h",
+        ],
+      ];
+
       const defaultRelays = [
         "wss://nos.lol",
         "wss://nostr.bitcoiner.social",
@@ -465,6 +470,16 @@
 
       window.addEventListener("resize", hideDropdown);
       document.addEventListener("click", hideDropdown);
+
+      const template = document.getElementById("bookmark");
+      document.getElementById("bookmarks").append(
+        ...bookmarks.map(([name, uri]) => {
+          const button = template.content.firstElementChild.cloneNode(true);
+          button.addEventListener("click", () => handleBookmarkClick(uri));
+          button.append(name);
+          return button;
+        })
+      );
     </script>
   </body>
 </html>
