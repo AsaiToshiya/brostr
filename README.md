@@ -7,7 +7,7 @@
 <p align="center">A native browser for the content on Nostr.</p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.4.0-blue">
+  <img src="https://img.shields.io/badge/version-0.5.0-blue">
 </p>
 
 ## Features
