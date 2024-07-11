@@ -139,13 +139,7 @@
         "wss://r.hostr.cc",
       ];
 
-      const canRender = (event) =>
-        event.kind == 5392 ||
-        event.kind == 35392 ||
-        event.kind == 30023 ||
-        ((event.kind == 1063 || event.kind == 1064) &&
-          findTag(event, "m")[1].startsWith("image/")) ||
-        event.kind == 64;
+      const canRender = (event) => !!createRenderer(event);
 
       const createFilter = ({ type, data }) =>
         type === "nevent"
@@ -165,7 +159,10 @@
           ? renderLongFormContent
           : event.kind == 64
           ? renderChess
-          : renderImage;
+          : ((event.kind == 1063 || event.kind == 1064) &&
+            findTag(event, "m")[1].startsWith("image/"))
+          ? renderImage
+          : null;
 
       // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
       const fetchResourceEvents = async (document) => {
