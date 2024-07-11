@@ -158,6 +158,15 @@
               "#d": [data.identifier],
             };
 
+      const createRenderer = (event) =>
+        event.kind == 5392 || event.kind == 35392
+          ? renderHtmlContent
+          : event.kind == 30023
+          ? renderLongFormContent
+          : event.kind == 64
+          ? renderChess
+          : renderImage;
+
       // { [nip21: `nostr:${string}`]: Event<number> }[] を返す
       const fetchResourceEvents = async (document) => {
         const nip21s = [
@@ -219,14 +228,7 @@
 
                     comments.innerHTML = "";
 
-                    const render =
-                      event.kind == 5392 || event.kind == 35392
-                        ? renderHtmlContent
-                        : event.kind == 30023
-                        ? renderLongFormContent
-                        : event.kind == 64
-                        ? renderChess
-                        : renderImage;
+                    const render = createRenderer(event);
                     await render(event);
 
                     // nocomment
