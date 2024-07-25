@@ -223,6 +223,7 @@
                     updateNavigationButtonClass(forward);
                     document.querySelector("#uri").value = nip19String;
 
+                    iframe.contentWindow.location.replace("about:blank");
                     comments.innerHTML = "";
 
                     const render = createRenderer(event);
