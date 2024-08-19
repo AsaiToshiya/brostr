@@ -22,7 +22,7 @@
 - [NIP-21: `nostr:` URI scheme][NIP-21]
 - [NIP-23: Long-form Content][NIP-23] (Powered by [Oracolo][Oracolo])
 - [NIP-48: Proxy Tags][NIP-48] (Experimental support)
-- [NIP-64: Chess (Portable Game Notation)][NIP-64] (Draft NIP, Powered by [JS PGN Viewer][JS PGN Viewer])
+- [NIP-64: Chess (Portable Game Notation)][NIP-64] (Powered by [JS PGN Viewer][JS PGN Viewer])
 - [NIP-94: File Metadata][NIP-94]
 - [NIP-95: Storage and Shared File][NIP-95] (Draft NIP)
 - [NIP-106: Decentralized Web Hosting on Nostr][NIP-106] (Draft NIP)
@@ -32,7 +32,7 @@
 [NIP-21]: https://github.com/nostr-protocol/nips/blob/master/21.md
 [NIP-23]: https://github.com/nostr-protocol/nips/blob/master/23.md
 [NIP-48]: https://github.com/nostr-protocol/nips/blob/master/48.md
-[NIP-64]: https://github.com/theborakompanioni/nips/blob/nip-64/64.md
+[NIP-64]: https://github.com/nostr-protocol/nips/blob/master/64.md
 [NIP-94]: https://github.com/nostr-protocol/nips/blob/master/94.md
 [NIP-95]: https://github.com/frbitten/nostr-nips/blob/NIP-95/95.md
 [NIP-106]: https://github.com/studiokaiji/nips/blob/master/106.md
