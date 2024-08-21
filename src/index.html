@@ -357,6 +357,7 @@
               (virtualDom.onload = () => {
                 const document = contentWindow.document;
                 const author = document.querySelector("meta[name='author']");
+                const relays = document.querySelector("meta[name='relays']");
                 const comments = document.querySelector(
                   "meta[name='comments']"
                 );
@@ -364,6 +365,7 @@
                   "value",
                   window.NostrTools.nip19.npubEncode(event.pubkey)
                 );
+                relays.setAttribute("value", defaultRelays.toString());
                 comments.setAttribute("value", "");
 
                 resolve(
@@ -383,6 +385,7 @@
           src: "../nocomment/embed.js",
           id: "nocomment",
         });
+        script.dataset.relays = JSON.stringify(defaultRelays);
         script.dataset.customBase = nip19;
         script.dataset.owner = window.NostrTools.nip19.npubEncode(event.pubkey);
         comments.appendChild(script);
