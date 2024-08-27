@@ -200,7 +200,10 @@
       const isSupported = ({ type }) => type == "nevent" || type == "naddr";
 
       const open = async (uri) => {
-        const nip19String = uri.replace(/^nostr:/, "");
+        const isSha256 = /[A-Fa-f0-9]{64}/.test(uri);
+        const nip19String = isSha256
+          ? window.NostrTools.nip19.neventEncode({ id: uri })
+          : uri.replace(/^nostr:/, "");
         const nip19 = window.NostrTools.nip19.decode(nip19String);
 
         isSupported(nip19)
