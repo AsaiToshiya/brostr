@@ -33232,7 +33232,8 @@ zoo`.split("\n");
     metadata,
     relays: relays2,
     replyForm,
-    level = 0
+    level = 0,
+    readonly: readonly2
   }) {
     const [expanded, setExpanded] = (0, import_react4.useState)(false);
     return /* @__PURE__ */ import_react4.default.createElement(CommentCard, { key: thread.id }, /* @__PURE__ */ import_react4.default.createElement("div", null, /* @__PURE__ */ import_react4.default.createElement(CommentTitle, null, "from", " ", /* @__PURE__ */ import_react4.default.createElement(
@@ -33256,7 +33257,7 @@ zoo`.split("\n");
         href: "nostr:" + nip19_exports.neventEncode({ id: thread.id, relays: relays2 })
       },
       (0, import_dayjs.default)(thread.created_at * 1e3).from(new Date())
-    ), /* @__PURE__ */ import_react4.default.createElement(ReplyButton_default, { onClick: () => setExpanded(!expanded) })), /* @__PURE__ */ import_react4.default.createElement(CommentContent, null, thread.content), expanded && /* @__PURE__ */ import_react4.default.createElement(ReplyWrap, null, replyForm(thread.id)), /* @__PURE__ */ import_react4.default.createElement(
+    ), !readonly2 && /* @__PURE__ */ import_react4.default.createElement(ReplyButton_default, { onClick: () => setExpanded(!expanded) })), /* @__PURE__ */ import_react4.default.createElement(CommentContent, null, thread.content), expanded && /* @__PURE__ */ import_react4.default.createElement(ReplyWrap, null, replyForm(thread.id)), /* @__PURE__ */ import_react4.default.createElement(
       "div",
       {
         style: {
@@ -33271,7 +33272,8 @@ zoo`.split("\n");
           metadata,
           relays: relays2,
           level: level + 1,
-          replyForm
+          replyForm,
+          readonly: readonly2
         }
       ))
     ));
@@ -33527,7 +33529,8 @@ zoo`.split("\n");
     owner: owner2,
     skip: skip2,
     customBase: customBase2,
-    placeholder: placeholder2
+    placeholder: placeholder2,
+    readonly: readonly2
   }) {
     let customBaseTag = (0, import_react7.useMemo)(() => {
       if (customBase2) {
@@ -33647,14 +33650,15 @@ zoo`.split("\n");
     if (skip2 && skip2 !== "" && skip2 === location.pathname) {
       return;
     }
-    return /* @__PURE__ */ import_react7.default.createElement(Container, null, editor(), /* @__PURE__ */ import_react7.default.createElement("div", null, threads?.map((thread) => /* @__PURE__ */ import_react7.default.createElement(
+    return /* @__PURE__ */ import_react7.default.createElement(Container, null, !readonly2 && editor(), /* @__PURE__ */ import_react7.default.createElement("div", null, threads?.map((thread) => /* @__PURE__ */ import_react7.default.createElement(
       Thread,
       {
         key: thread.id,
         thread,
         metadata,
         relays: chosenRelays,
-        replyForm: editor
+        replyForm: editor,
+        readonly: readonly2
       }
     ))));
     function editor(parentId) {
@@ -33739,6 +33743,7 @@ zoo`.split("\n");
   var owner = script.dataset.owner || "";
   var customBase = script.dataset.customBase;
   var placeholder = script.dataset.placeholder || "";
+  var readonly = script.dataset.readonly === "true";
   var container = document.createElement("div");
   container.style.width = "100%";
   script.parentNode.insertBefore(container, script);
@@ -33751,7 +33756,8 @@ zoo`.split("\n");
         skip,
         relays,
         owner,
-        placeholder
+        placeholder,
+        readonly
       }
     )
   );
