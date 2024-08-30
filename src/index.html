@@ -405,6 +405,7 @@
         script.dataset.relays = JSON.stringify(defaultRelays);
         script.dataset.customBase = nip19;
         script.dataset.owner = window.NostrTools.nip19.npubEncode(event.pubkey);
+        script.dataset.readonly = true;
         comments.appendChild(script);
       };
 
