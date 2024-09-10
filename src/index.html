@@ -56,11 +56,11 @@
         type="text"
         size="50"
         value="nevent1qqst99d8u7484nv3tsnthh6xpvz0nc8fdfug9q5ch2yxwmjllfm5ccsp5602c"
-        class="w-full bg-gray-100 rounded-full py-1 px-4 mr-1 ml-2 text-gray-700"
+        class="w-full bg-gray-100 rounded-full py-1 px-4 mr-1 ml-2 text-gray-700 text-sm"
       />
       <button
         onclick="handleClick()"
-        class="px-2 py-1 hover:bg-gray-200 rounded text-gray-700"
+        class="px-2 py-1 hover:bg-gray-200 rounded text-gray-700 text-sm"
       >
         Go
       </button>
@@ -68,14 +68,14 @@
         onclick="handleCommentClick()"
         class="w-8 h-8 rounded-full ml-2 hover:bg-gray-200 text-gray-700"
       >
-        <i class="fas fa-comment fa-sm"></i>
+        <i class="fas fa-comment"></i>
       </button>
       <button
         id="menu"
         onclick="handleMenuClick(event)"
         class="w-8 h-8 rounded-full ml-1 hover:bg-gray-200 text-gray-700"
       >
-        <i class="fas fa-ellipsis-vertical fa-sm"></i>
+        <i class="fas fa-ellipsis-vertical"></i>
       </button>
     </div>
     <div id="bookmarks" class="flex pb-2 px-2 border-b border-gray-300"></div>
@@ -95,7 +95,7 @@
       <ul class="py-2">
         <li>
           <a
-            class="block px-4 py-2 whitespace-nowrap hover:bg-gray-200 cursor-pointer text-gray-700"
+            class="block px-4 py-2 whitespace-nowrap hover:bg-gray-200 cursor-pointer text-gray-700 text-sm"
             onclick="handleBookmarkClick('nevent1qqst7mtcr7smjue7qgn4m0we5p5juhh93ejsxer2sg4eexzkzs65luchfpxzx')"
             >About Brostr</a
           >
@@ -105,9 +105,9 @@
 
     <template id="bookmark">
       <button
-        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200 [&:not(:last-child)]:mr-1 text-gray-700"
+        class="inline-flex items-center rounded-full px-2 py-1 hover:bg-gray-200 [&:not(:last-child)]:mr-1 text-gray-700 text-sm"
       >
-        <i class="fas fa-globe-americas fa-sm me-2"></i>
+        <i class="fas fa-globe-americas me-2"></i>
       </button>
     </template>
 
