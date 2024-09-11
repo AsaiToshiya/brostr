@@ -472,9 +472,6 @@
         },
       };
 
-      const nip19 = new URLSearchParams(location.search).get("nip19");
-      nip19 && (async () => await open(nip19))();
-
       setInterval(
         () =>
           [
@@ -505,6 +502,9 @@
           return button;
         })
       );
+
+      const nip19 = new URLSearchParams(location.search).get("nip19");
+      nip19 && (async () => await open(nip19))();
     </script>
   </body>
 </html>
