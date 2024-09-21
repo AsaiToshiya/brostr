@@ -166,7 +166,7 @@
           (nip21) => window.NostrTools.nip21.parse(nip21).decoded
         );
         const filters = nip19s.map(createFilter);
-        const events = await querySyncMany(pool, defaultRelays, filters);
+        const events = await querySync(pool, defaultRelays, filters);
         await pool.close(defaultRelays);
 
         return nip21s.reduce((acc, obj, ind) => {
@@ -233,7 +233,7 @@
           : window.open(`https://njump.me/${nip19String}`);
       };
 
-      const querySyncMany = async (pool, relays, filters) => {
+      const querySync = async (pool, relays, filters) => {
         return new Promise(async (resolve) => {
           const events = [];
           pool.subscribeManyEose(relays, filters, {
