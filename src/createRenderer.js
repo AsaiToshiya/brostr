@@ -51,30 +51,14 @@ const renderHtmlContent = async (event) => {
     const proxyTag = findTag(event, "proxy");
     const isWebProxy = proxyTag?.[2] == "web";
 
-    virtualDom.srcdoc = isWebProxy
-      ? await (await fetch(proxyTag[1])).text()
-      : event.content;
-    return new Promise(
-      (resolve) =>
-        (virtualDom.onload = async () => {
-          isWebProxy
-            ? convertUrlsToProxyUrl(
-                virtualDom.contentWindow.document,
-                proxyTag[1]
-              )
-            : await convertNip21sToResource(
-                virtualDom.contentWindow.document
-              );
-
-          resolve(
-            unescapeXML(
-              new XMLSerializer().serializeToString(
-                virtualDom.contentWindow.document
-              )
-            )
-          );
-        })
+    const doc = new DOMParser().parseFromString(
+      isWebProxy ? await (await fetch(proxyTag[1])).text() : event.content,
+      "text/html"
     );
+    isWebProxy
+      ? convertUrlsToProxyUrl(doc, proxyTag[1])
+      : await convertNip21sToResource(doc);
+    return unescapeXML(new XMLSerializer().serializeToString(doc));
   };
 
   iframe.srcdoc = await normalizeHtml(event);
@@ -99,29 +83,21 @@ const renderImage = async (event) => {
 
 const renderLongFormContent = async (event) => {
   const loadOracolo = async (event) => {
-    const contentWindow = virtualDom.contentWindow;
-    contentWindow.location.replace("../oracolo/dist/index.html");
-    return new Promise(
-      (resolve) =>
-        (virtualDom.onload = () => {
-          const document = contentWindow.document;
-          const author = document.querySelector("meta[name='author']");
-          const relays = document.querySelector("meta[name='relays']");
-          const comments = document.querySelector(
-            "meta[name='comments']"
-          );
-          author.setAttribute(
-            "value",
-            window.NostrTools.nip19.npubEncode(event.pubkey)
-          );
-          relays.setAttribute("value", defaultRelays.toString());
-          comments.setAttribute("value", "");
-
-          resolve(
-            unescapeXML(new XMLSerializer().serializeToString(document))
-          );
-        })
+    const document = new DOMParser().parseFromString(
+      await (await fetch("../oracolo/dist/index.html")).text(),
+      "text/html"
     );
+    const author = document.querySelector("meta[name='author']");
+    const relays = document.querySelector("meta[name='relays']");
+    const comments = document.querySelector("meta[name='comments']");
+    author.setAttribute(
+      "value",
+      window.NostrTools.nip19.npubEncode(event.pubkey)
+    );
+    relays.setAttribute("value", defaultRelays.toString());
+    comments.setAttribute("value", "");
+
+    return unescapeXML(new XMLSerializer().serializeToString(document));
   };
 
   iframe.contentWindow.location.replace("about:blank");
