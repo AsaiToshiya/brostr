@@ -34,7 +34,7 @@
     />
   </head>
   <body class="flex flex-col h-full m-0 p-0 w-full">
-    <div class="flex p-2 border-gray-300">
+    <div class="flex p-2 border-gray-300 items-center">
       <button
         id="back"
         onclick="handleBackClick()"
@@ -66,9 +66,27 @@
       </button>
       <button
         onclick="handleCommentClick()"
-        class="w-8 h-8 rounded-full ml-2 hover:bg-gray-200 text-gray-700"
+        class="w-8 h-8 rounded-full mr-2 ml-2 hover:bg-gray-200 text-gray-700"
       >
         <i class="fas fa-comment"></i>
+      </button>
+      <div class="h-5 w-0.5 bg-neutral-100"></div>
+      <button
+        id="user"
+        onclick="handleUserClick(event)"
+        class="flex w-8 h-8 items-center justify-center rounded-full ml-2 hover:bg-gray-200 text-gray-700"
+      >
+        <i id="placeholderIcon" class="fas fa-circle-user fa-lg"></i>
+        <img id="avatar" class="hidden w-5 h-5 rounded-full" />
+        <div
+          id="letterAvatar"
+          class="relative hidden items-center justify-center w-5 h-5 overflow-hidden bg-gray-100 rounded-full"
+        >
+          <span
+            id="letterAvatarLetter"
+            class="font-medium text-gray-600"
+          ></span>
+        </div>
       </button>
       <button
         id="menu"
@@ -85,6 +103,62 @@
         id="comments"
         class="w-[600px] hidden overflow-auto border-l border-gray-300"
       ></div>
+    </div>
+
+    <div
+      id="loginPopup"
+      class="absolute z-10 invisible w-full border border-gray-300 bg-white rounded-lg shadow md:mt-0 sm:max-w-lg xl:p-0"
+    >
+      <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <h1
+          class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
+        >
+          Login
+        </h1>
+        <div class="space-y-4 md:space-y-6">
+          <div>
+            <label
+              for="nsec"
+              class="block mb-2 text-sm font-medium text-gray-900"
+              >nsec</label
+            >
+            <input
+              type="password"
+              name="nsec"
+              id="nsec"
+              class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
+              required=""
+            />
+          </div>
+          <span
+            id="nsecError"
+            class="hidden items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1"
+          >
+            Invalid nsec.
+          </span>
+          <button
+            onclick="handleLoginClick()"
+            class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          >
+            Login
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="userMenu"
+      class="absolute z-10 invisible border border-gray-300 bg-white rounded-lg shadow"
+    >
+      <ul class="py-2">
+        <li>
+          <a
+            class="block px-4 py-2 whitespace-nowrap hover:bg-gray-200 cursor-pointer text-gray-700 text-sm"
+            onclick="handleLogoutClick()"
+            >Logout</a
+          >
+        </li>
+      </ul>
     </div>
 
     <div
@@ -181,9 +255,14 @@
         }, {});
       };
 
-      const hideDropdown = () =>
+      const hideDropdown = (e) => {
+        (!e || !loginPopup.contains(e.target)) &&
+          !loginPopup.classList.contains("invisible") &&
+          loginPopup.classList.add("invisible");
         !dropdown.classList.contains("invisible") &&
-        dropdown.classList.add("invisible");
+          dropdown.classList.add("invisible");
+        userMenu.classList.add("invisible");
+      };
 
       const isSupported = ({ type }) => type == "nevent" || type == "naddr";
 
@@ -274,8 +353,22 @@
         script.dataset.relays = JSON.stringify(defaultRelays);
         script.dataset.customBase = nip19;
         script.dataset.owner = window.NostrTools.nip19.npubEncode(event.pubkey);
-        script.dataset.readonly = true;
+        script.dataset.readonly = !sk;
         comments.appendChild(script);
+      };
+
+      const rerenderNocomment = () => {
+        const script = document.getElementById("nocomment");
+        const newScript = Object.assign(document.createElement("script"), {
+          src: "../nocomment/embed.js",
+          id: "nocomment",
+        });
+        newScript.dataset.relays = script?.dataset.relays;
+        newScript.dataset.customBase = script?.dataset.customBase;
+        newScript.dataset.owner = script?.dataset.owner;
+        newScript.dataset.readonly = !sk;
+        comments.innerHTML = "";
+        comments.appendChild(newScript);
       };
 
       const handleBackClick = async () => {
@@ -300,6 +393,55 @@
         href && window.open(event.target.href);
       };
 
+      const handleLoginClick = async () => {
+        nsecError.classList.add("hidden");
+        nsecError.classList.remove("flex");
+
+        window.NostrTools.nip19.NostrTypeGuard.isNSec(nsec.value)
+          ? await (async () => {
+              sk = window.NostrTools.nip19.decode(nsec.value).data;
+
+              nsec.value = "";
+              hideDropdown();
+              rerenderNocomment();
+
+              const pool = new window.NostrTools.SimplePool();
+              const pk = window.NostrTools.getPublicKey(sk);
+              const event = await pool.get(defaultRelays, {
+                kinds: [0],
+                authors: [pk],
+              });
+              pool.close(defaultRelays);
+
+              const metadata = event && JSON.parse(event.content);
+              const picture = metadata?.picture;
+
+              placeholderIcon.classList.add("hidden");
+              (picture
+                ? () => {
+                    avatar.classList.remove("hidden");
+                    avatar.src = picture;
+                  }
+                : () => {
+                    letterAvatar.classList.add("inline-flex");
+                    letterAvatar.classList.remove("hidden");
+                    letterAvatarLetter.textContent = Array.from(
+                      metadata?.display_name || metadata?.name || pk
+                    )[0];
+                  })();
+            })()
+          : nsecError.classList.add("flex") ||
+            nsecError.classList.remove("hidden");
+      };
+
+      const handleLogoutClick = () => {
+        sk = null;
+        placeholderIcon.classList.remove("hidden");
+        avatar.classList.add("hidden");
+        letterAvatar.classList.add("hidden");
+        letterAvatar.classList.remove("inline-flex");
+      };
+
       const handleMenuClick = (event) => {
         event.stopPropagation();
         const buttonRect = menu.getBoundingClientRect();
@@ -312,6 +454,17 @@
         event.preventDefault();
         await open(event.target.href);
       };
+
+      const handleUserClick = (event) => {
+        event.stopPropagation();
+        const popup = sk ? userMenu : loginPopup;
+        const buttonRect = user.getBoundingClientRect();
+        popup.style.top = `${buttonRect.bottom}px`;
+        popup.style.left = `${buttonRect.right - popup.offsetWidth}px`;
+        popup.classList.toggle("invisible");
+      };
+
+      let sk;
 
       const history = {
         _history: [],
@@ -371,6 +524,15 @@
           return button;
         })
       );
+
+      window.nostr = {
+        async getPublicKey() {
+          return window.NostrTools.getPublicKey(sk);
+        },
+        async signEvent(event) {
+          return window.NostrTools.finalizeEvent(event, sk);
+        },
+      };
 
       const nip19 = new URLSearchParams(location.search).get("nip19");
       nip19 && (async () => await open(nip19))();
