@@ -257,10 +257,8 @@
 
       const hideDropdown = (e) => {
         (!e || !loginPopup.contains(e.target)) &&
-          !loginPopup.classList.contains("invisible") &&
           loginPopup.classList.add("invisible");
-        !dropdown.classList.contains("invisible") &&
-          dropdown.classList.add("invisible");
+        dropdown.classList.add("invisible");
         userMenu.classList.add("invisible");
       };
 
