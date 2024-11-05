@@ -255,7 +255,7 @@
         }, {});
       };
 
-      const hideDropdown = (e) => {
+      const hidePopup = (e) => {
         (!e || !loginPopup.contains(e.target)) &&
           loginPopup.classList.add("invisible");
         dropdown.classList.add("invisible");
@@ -510,8 +510,8 @@
         2000
       );
 
-      window.addEventListener("resize", hideDropdown);
-      document.addEventListener("click", hideDropdown);
+      window.addEventListener("resize", hidePopup);
+      document.addEventListener("click", hidePopup);
 
       const template = document.getElementById("bookmark");
       document.getElementById("bookmarks").append(
