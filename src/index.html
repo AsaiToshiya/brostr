@@ -188,20 +188,31 @@
     <script src="convertNip21sToResource.js"></script>
     <script src="createRenderer.js"></script>
     <script>
+      // like kind:30003 tags
       const bookmarks = [
         [
-          "Broogle",
-          "naddr1qqrkyun0dankcegzyq9z7xwurgv90ykrkqmk78tln9cjjh5fx2txcwtexkjamhg52x395qcyqqqg5sq7raumy",
+          "a",
+          "35392:0a2f19dc1a185792c3b0376f1d7f9971295e8932966c397935a5dddd1451a25a:broogle",
         ],
         [
-          "How to do curation and businesses on Nostr",
-          "naddr1qvzqqqr4gupzqwlsccluhy6xxsr6l9a9uhhxf75g85g8a709tprjcn4e42h053vaqqyrze35vscrzvfcnx3g2h",
+          "a",
+          "30023:3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d:1f4d0118",
         ],
         [
-          "Chess",
-          "nevent1qqszyvyhx69weu5mvjn65nyrdeapsjd2c0c0tjpwms02kh3gup43nvs0xf5q9",
+          "e",
+          "223097368aecf29b64a7aa4c836e7a1849aac3f0f5c82edc1eab5e28e06b19b2",
         ],
       ];
+
+      // like kind:30078 content
+      const bookmarksMetadata = {
+        "35392:0a2f19dc1a185792c3b0376f1d7f9971295e8932966c397935a5dddd1451a25a:broogle":
+          "Broogle",
+        "30023:3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d:1f4d0118":
+          "How to do curation and businesses on Nostr",
+        "223097368aecf29b64a7aa4c836e7a1849aac3f0f5c82edc1eab5e28e06b19b2":
+          "Chess",
+      };
 
       const defaultRelays = [
         "wss://nos.lol",
@@ -307,6 +318,16 @@
                   );
             })()
           : window.open(`https://njump.me/${nip19String}`);
+      };
+
+      // AddressPointer を返す
+      const parseATag = (value) => {
+        const tokens = value.split(":");
+        return {
+          kind: tokens[0],
+          pubkey: tokens[1],
+          identifier: tokens[2],
+        };
       };
 
       const querySync = async (pool, relays, filters) => {
@@ -515,10 +536,14 @@
 
       const template = document.getElementById("bookmark");
       document.getElementById("bookmarks").append(
-        ...bookmarks.map(([name, uri]) => {
+        ...bookmarks.map(([tagName, value]) => {
+          const uri =
+            tagName === "e"
+              ? window.NostrTools.nip19.neventEncode({ id: value })
+              : window.NostrTools.nip19.naddrEncode(parseATag(value));
           const button = template.content.firstElementChild.cloneNode(true);
           button.addEventListener("click", () => handleBookmarkClick(uri));
-          button.append(name);
+          button.append(bookmarksMetadata[value]);
           return button;
         })
       );
