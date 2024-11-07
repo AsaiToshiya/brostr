@@ -224,8 +224,6 @@
         "wss://r.hostr.cc",
       ];
 
-      const canRender = (event) => !!createRenderer(event);
-
       const createFilter = ({ type, data }) =>
         type === "nevent"
           ? {
@@ -292,7 +290,7 @@
               const event = await pool.get(relays, filter);
               pool.close(relays);
 
-              canRender(event)
+              !!createRenderer(event)
                 ? (async () => {
                     history.push(nip19String);
 
