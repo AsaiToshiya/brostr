@@ -304,7 +304,14 @@
                     comments.innerHTML = "";
 
                     const render = createRenderer(event);
-                    await render(event);
+                    const { content, uriFragmentIdentifier } = await render(
+                      event
+                    );
+                    iframe.srcdoc = content;
+                    uriFragmentIdentifier &&
+                      iframe.contentWindow.location.replace(
+                        `about:srcdoc#${uriFragmentIdentifier}`
+                      );
 
                     // nocomment
                     renderNocomment(nip19String, event);

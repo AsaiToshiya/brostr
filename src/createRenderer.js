@@ -10,8 +10,8 @@ const createRenderer = (event) =>
     ? renderImage
     : null;
 
-const renderChess = async (event) => {
-  iframe.srcdoc = `<!DOCTYPE html>
+const renderChess = async (event) => ({
+  content: `<!DOCTYPE html>
 <html>
   <head>
     <script src="../pgnviewer/jsPgnViewer.js"><\/script>
@@ -31,16 +31,15 @@ const renderChess = async (event) => {
       brd.init();
     <\/script>
   </body>
-</html>`;
-};
+</html>`,
+});
 
 const renderHtmlContent = async (event) => {
   const convertUrlsToProxyUrl = (document, proxyUrl) => {
     [...document.querySelectorAll("script, link, img")]
       .filter((el) => el.getAttribute("src") || el.getAttribute("href"))
       .forEach((el) => {
-        const originalValue =
-          el.getAttribute("src") || el.getAttribute("href");
+        const originalValue = el.getAttribute("src") || el.getAttribute("href");
         const newUrl = new URL(originalValue, proxyUrl);
         el.src && (el.src = newUrl);
         el.href && (el.href = newUrl);
@@ -61,7 +60,9 @@ const renderHtmlContent = async (event) => {
     return unescapeXML(new XMLSerializer().serializeToString(doc));
   };
 
-  iframe.srcdoc = await normalizeHtml(event);
+  return {
+    content: await normalizeHtml(event),
+  };
 };
 
 const renderImage = async (event) => {
@@ -70,7 +71,8 @@ const renderImage = async (event) => {
     event.kind == 1063
       ? findTag(event, "url")[1]
       : `data:${mimeType};base64,${event.content}`;
-  iframe.srcdoc = `<!DOCTYPE html>
+  return {
+    content: `<!DOCTYPE html>
 <html class="h-full m-0 p-0 w-full">
   <head>
     <script src="https://cdn.tailwindcss.com"><\/script>
@@ -78,7 +80,8 @@ const renderImage = async (event) => {
   <body class="h-full m-0 p-0 w-full bg-black">
     <img src="${url}" class="w-full h-full object-scale-down" \/>
   <\/body>
-<\/html>`;
+<\/html>`,
+  };
 };
 
 const renderLongFormContent = async (event) => {
@@ -101,8 +104,10 @@ const renderLongFormContent = async (event) => {
   };
 
   iframe.contentWindow.location.replace("about:blank");
-  iframe.srcdoc = await loadOracolo(event);
-  iframe.contentWindow.location.replace(`about:srcdoc#${event.id}`);
+  return {
+    content: await loadOracolo(event),
+    uriFragmentIdentifier: event.id,
+  };
 };
 
 module.exports = createRenderer;
