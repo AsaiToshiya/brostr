@@ -304,9 +304,8 @@
                     comments.innerHTML = "";
 
                     const render = createRenderer(event);
-                    const { content, uriFragmentIdentifier } = await render(
-                      event
-                    );
+                    const { content, uriFragmentIdentifier } =
+                      await render.render(event);
                     iframe.srcdoc = content;
                     uriFragmentIdentifier &&
                       iframe.contentWindow.location.replace(
