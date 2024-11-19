@@ -313,7 +313,12 @@
                       );
 
                     // nocomment
-                    renderNocomment(nip19String, event);
+                    renderNocomment({
+                      relays: JSON.stringify(defaultRelays),
+                      customBase: nip19String,
+                      owner: window.NostrTools.nip19.npubEncode(event.pubkey),
+                      readonly: !sk,
+                    });
                   })()
                 : window.open(
                     `https://njump.me/${window.NostrTools.nip19.neventEncode({
@@ -368,15 +373,15 @@
           : button.classList.add("text-gray-700");
       };
 
-      const renderNocomment = (nip19, event) => {
+      const renderNocomment = ({ relays, customBase, owner, readonly }) => {
         const script = Object.assign(document.createElement("script"), {
           src: "../nocomment/embed.js",
           id: "nocomment",
         });
-        script.dataset.relays = JSON.stringify(defaultRelays);
-        script.dataset.customBase = nip19;
-        script.dataset.owner = window.NostrTools.nip19.npubEncode(event.pubkey);
-        script.dataset.readonly = !sk;
+        script.dataset.relays = relays;
+        script.dataset.customBase = customBase;
+        script.dataset.owner = owner;
+        script.dataset.readonly = readonly;
         comments.appendChild(script);
       };
 
