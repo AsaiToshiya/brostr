@@ -442,6 +442,7 @@
               pool.close(defaultRelays);
 
               const metadata = event && JSON.parse(event.content);
+              const name = metadata?.display_name || metadata?.name || pk;
               const picture = metadata?.picture;
 
               placeholderIcon.classList.add("hidden");
@@ -453,9 +454,7 @@
                 : () => {
                     letterAvatar.classList.add("inline-flex");
                     letterAvatar.classList.remove("hidden");
-                    letterAvatarLetter.textContent = Array.from(
-                      metadata?.display_name || metadata?.name || pk
-                    )[0];
+                    letterAvatarLetter.textContent = Array.from(name)[0];
                   })();
             })()
           : nsecError.classList.add("flex") ||
