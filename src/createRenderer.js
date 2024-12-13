@@ -1,16 +1,8 @@
 const createRenderer = (event) =>
-  event.kind == 5392 || event.kind == 35392
-    ? renderHtmlContent
-    : event.kind == 30023
-    ? renderLongFormContent
-    : event.kind == 64
-    ? renderChess
-    : ((event.kind == 1063 || event.kind == 1064) &&
-      findTag(event, "m")[1].startsWith("image/"))
-    ? renderImage
-    : null;
+  renderers.find((renderer) => renderer.canRender(event));
 
-const renderChess = {
+const chessRenderer = {
+  canRender: (event) => event.kind == 64,
   render: async (event) => ({
     content: `<!DOCTYPE html>
 <html>
@@ -36,7 +28,8 @@ const renderChess = {
   }),
 };
 
-const renderHtmlContent = {
+const htmlContentRenderer = {
+  canRender: (event) => event.kind == 5392 || event.kind == 35392,
   render: async (event) => {
     const convertUrlsToProxyUrl = (document, proxyUrl) => {
       [...document.querySelectorAll("script, link, img")]
@@ -70,7 +63,10 @@ const renderHtmlContent = {
   },
 };
 
-const renderImage = {
+const imageRenderer = {
+  canRender: (event) =>
+    (event.kind == 1063 || event.kind == 1064) &&
+    findTag(event, "m")[1].startsWith("image/"),
   render: async (event) => {
     const mimeType = findTag(event, "m")[1];
     const url =
@@ -91,7 +87,8 @@ const renderImage = {
   },
 };
 
-const renderLongFormContent = {
+const longContentRenderer = {
+  canRender: (event) => event.kind == 30023,
   render: async (event) => {
     const loadOracolo = async (event) => {
       const document = new DOMParser().parseFromString(
@@ -118,5 +115,12 @@ const renderLongFormContent = {
     };
   },
 };
+
+const renderers = [
+  chessRenderer,
+  htmlContentRenderer,
+  imageRenderer,
+  longContentRenderer,
+];
 
 module.exports = createRenderer;
