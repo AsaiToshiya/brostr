@@ -26,6 +26,7 @@
 - [NIP-94: File Metadata][NIP-94]
 - [NIP-95: Storage and Shared File][NIP-95] (Draft NIP)
 - [NIP-106: Decentralized Web Hosting on Nostr][NIP-106] (Draft NIP)
+- [`nreq`][nreq] (Draft PR)
 
 [NIP-01]: https://github.com/nostr-protocol/nips/blob/master/01.md
 [NIP-19]: https://github.com/nostr-protocol/nips/blob/master/19.md
@@ -36,6 +37,7 @@
 [NIP-94]: https://github.com/nostr-protocol/nips/blob/master/94.md
 [NIP-95]: https://github.com/frbitten/nostr-nips/blob/NIP-95/95.md
 [NIP-106]: https://github.com/studiokaiji/nips/blob/master/106.md
+[nreq]: https://github.com/nostr-protocol/nips/pull/882
 [nocomment]: https://github.com/fiatjaf/nocomment
 [Oracolo]: https://github.com/dtonon/oracolo
 [JS PGN Viewer]: https://github.com/toomasr/jspgnviewer
@@ -64,6 +66,7 @@ curl -OL https://github.com/toomasr/jspgnviewer/releases/download/jspgnviewer-wo
 tar -xf pgnviewer-0.7.3.zip
 rm pgnviewer-0.7.3.zip
 del pgnviewer-0.7.3.zip
+curl -o nreq/dist/nreq.js --create-dirs https://asaitoshiya.github.io/nostr-toybox/nreq/dist/nreq.js
 ```
 
 ### Run

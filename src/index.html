@@ -185,6 +185,7 @@
     </template>
 
     <script src="https://unpkg.com/nostr-tools@2.8.1/lib/nostr.bundle.js"></script>
+    <script src="../nreq/dist/nreq.js"></script>
     <script src="convertNip21sToResource.js"></script>
     <script src="createRenderer.js"></script>
     <script>
@@ -271,20 +272,25 @@
         userMenu.classList.add("invisible");
       };
 
-      const isSupported = ({ type }) => type == "nevent" || type == "naddr";
+      const isSupported = ({ type }) =>
+        type == "nevent" || type == "naddr" || type == "nreq";
 
       const open = async (uri) => {
         const isSha256 = /[A-Fa-f0-9]{64}/.test(uri);
         const nip19String = isSha256
           ? window.NostrTools.nip19.neventEncode({ id: uri })
           : uri.replace(/^nostr:/, "");
-        const nip19 = window.NostrTools.nip19.decode(nip19String);
+        const nip19 = nip19String.startsWith("nreq")
+          ? { type: "nreq", data: nreq.decode(nip19String) }
+          : window.NostrTools.nip19.decode(nip19String);
 
         isSupported(nip19)
           ? (async () => {
-              const filter = createFilter(nip19);
+              const filter = nip19String.startsWith("nreq")
+                ? nip19.data
+                : createFilter(nip19);
               const pool = new window.NostrTools.SimplePool();
-              const relays = nip19.data.relays.length
+              const relays = nip19.data.relays?.length
                 ? nip19.data.relays
                 : defaultRelays;
               const event = await pool.get(relays, filter);
