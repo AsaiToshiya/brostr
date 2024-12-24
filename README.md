@@ -4,7 +4,7 @@
 
 <h1 align="center">Brostr</h1>
 
-<p align="center">A native browser for the content on Nostr.</p>
+<p align="center">A native browser for Other Stuff on Nostr.</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-0.5.0-blue">
