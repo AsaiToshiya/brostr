@@ -96,11 +96,38 @@ const longContentRenderer = {
   },
 };
 
+const wikiRenderer = {
+  canRender: (event) => event.kind == 30818,
+  render: async (event) => {
+    const document = new DOMParser().parseFromString(
+      await (await fetch("../wiki-article/dist/index.html")).text(),
+      "text/html"
+    );
+    const usage = document.querySelector("meta[name='usage']");
+    const wikilinkPrefix = document.querySelector(
+      "meta[name='wikilink-prefix']"
+    );
+    usage.setAttribute("content", "false");
+    wikilinkPrefix.setAttribute("content", "nostr:");
+    const content = unescapeXML(
+      new XMLSerializer().serializeToString(document)
+    );
+
+    return {
+      content,
+      uriFragmentIdentifier: window.NostrTools.nip19.neventEncode({
+        id: event.id,
+      }),
+    };
+  },
+};
+
 const renderers = [
   chessRenderer,
   htmlContentRenderer,
   imageRenderer,
   longContentRenderer,
+  wikiRenderer,
 ];
 
 module.exports = createRenderer;
