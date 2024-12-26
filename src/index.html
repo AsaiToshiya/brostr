@@ -439,7 +439,7 @@
               sk = window.NostrTools.nip19.decode(nsec.value).data;
 
               nsec.value = "";
-              hideDropdown();
+              hidePopup();
               rerenderNocomment();
 
               const pool = new window.NostrTools.SimplePool();
