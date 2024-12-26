@@ -277,11 +277,9 @@
 
       const open = async (uri) => {
         const isSha256 = /[A-Fa-f0-9]{64}/.test(uri);
-        const [nip19String] = (
-          isSha256
-            ? window.NostrTools.nip19.neventEncode({ id: uri })
-            : uri.replace(/^nostr:/, "")
-        ).split("#");
+        const nip19String = isSha256
+          ? window.NostrTools.nip19.neventEncode({ id: uri })
+          : uri.replace(/^nostr:/, "");
         const nip19 = nip19String.startsWith("nreq")
           ? { type: "nreq", data: nreq.decode(nip19String) }
           : window.NostrTools.nip19.decode(nip19String);
@@ -313,7 +311,7 @@
                     comments.innerHTML = "";
 
                     const { content, uriFragmentIdentifier } =
-                      await render.render(nip19String, event);
+                      await render.render(event);
                     iframe.srcdoc = content;
                     uriFragmentIdentifier &&
                       iframe.contentWindow.location.replace(

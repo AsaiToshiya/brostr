@@ -3,7 +3,7 @@ const createRenderer = (event) =>
 
 const chessRenderer = {
   canRender: (event) => event.kind == 64,
-  render: async (uri, event) => ({
+  render: async (event) => ({
     content: `<!DOCTYPE html>
 <html>
   <head>
@@ -30,7 +30,7 @@ const chessRenderer = {
 
 const htmlContentRenderer = {
   canRender: (event) => event.kind == 5392 || event.kind == 35392,
-  render: async (uri, event) => {
+  render: async (event) => {
     const convertUrlsToProxyUrl = (document, proxyUrl) => {
       [...document.querySelectorAll("script, link, img")]
         .filter((el) => el.getAttribute("src") || el.getAttribute("href"))
@@ -59,7 +59,6 @@ const htmlContentRenderer = {
 
     return {
       content: await normalizeHtml(event),
-      uriFragmentIdentifier: uri.split("#")?.[1],
     };
   },
 };
@@ -68,7 +67,7 @@ const imageRenderer = {
   canRender: (event) =>
     (event.kind == 1063 || event.kind == 1064) &&
     findTag(event, "m")[1].startsWith("image/"),
-  render: async (uri, event) => {
+  render: async (event) => {
     const mimeType = findTag(event, "m")[1];
     const url =
       event.kind == 1063
@@ -90,7 +89,7 @@ const imageRenderer = {
 
 const longContentRenderer = {
   canRender: (event) => event.kind == 30023,
-  render: async (uri, event) => {
+  render: async (event) => {
     const loadOracolo = async (event) => {
       const document = new DOMParser().parseFromString(
         await (await fetch("../oracolo/dist/index.html")).text(),
