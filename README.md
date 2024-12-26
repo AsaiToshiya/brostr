@@ -21,7 +21,6 @@
 - [NIP-19: bech32-encoded entities][NIP-19]
 - [NIP-21: `nostr:` URI scheme][NIP-21]
 - [NIP-23: Long-form Content][NIP-23] (Powered by [Oracolo][Oracolo])
-- [NIP-48: Proxy Tags][NIP-48] (Experimental support)
 - [NIP-64: Chess (Portable Game Notation)][NIP-64] (Powered by [JS PGN Viewer][JS PGN Viewer])
 - [NIP-94: File Metadata][NIP-94]
 - [NIP-95: Storage and Shared File][NIP-95] (Draft NIP)
@@ -44,9 +43,9 @@
 
 ## Screenshots
 
-| HTML Content                      | Long-form Content                      | Proxy                      | Image                      | Chess                      | Comments                      |
-| --------------------------------- | -------------------------------------- | -------------------------- | -------------------------- | -------------------------- | ----------------------------- |
-| ![](screenshots/html-content.png) | ![](screenshots/long-form-content.png) | ![](screenshots/proxy.png) | ![](screenshots/image.png) | ![](screenshots/chess.png) | ![](screenshots/comments.png) |
+| HTML Content                      | Long-form Content                      | Image                      | Chess                      | Comments                      |
+| --------------------------------- | -------------------------------------- | -------------------------- | -------------------------- | ----------------------------- |
+| ![](screenshots/html-content.png) | ![](screenshots/long-form-content.png) | ![](screenshots/image.png) | ![](screenshots/chess.png) | ![](screenshots/comments.png) |
 
 ## Install
 

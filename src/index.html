@@ -169,7 +169,7 @@
         <li>
           <a
             class="block px-4 py-2 whitespace-nowrap hover:bg-gray-200 cursor-pointer text-gray-700 text-sm"
-            onclick="handleBookmarkClick('nevent1qqst7mtcr7smjue7qgn4m0we5p5juhh93ejsxer2sg4eexzkzs65luchfpxzx')"
+            onclick="handleAboutBrostrClick()"
             >About Brostr</a
           >
         </li>
@@ -404,6 +404,9 @@
         comments.innerHTML = "";
         comments.appendChild(newScript);
       };
+
+      const handleAboutBrostrClick = () =>
+        window.open("https://asaitoshiya.github.io/brostr/");
 
       const handleBackClick = async () => {
         const uri = history.back();

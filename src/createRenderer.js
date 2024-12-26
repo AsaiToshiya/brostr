@@ -31,29 +31,9 @@ const chessRenderer = {
 const htmlContentRenderer = {
   canRender: (event) => event.kind == 5392 || event.kind == 35392,
   render: async (event) => {
-    const convertUrlsToProxyUrl = (document, proxyUrl) => {
-      [...document.querySelectorAll("script, link, img")]
-        .filter((el) => el.getAttribute("src") || el.getAttribute("href"))
-        .forEach((el) => {
-          const originalValue =
-            el.getAttribute("src") || el.getAttribute("href");
-          const newUrl = new URL(originalValue, proxyUrl);
-          el.src && (el.src = newUrl);
-          el.href && (el.href = newUrl);
-        });
-    };
-
     const normalizeHtml = async (event) => {
-      const proxyTag = findTag(event, "proxy");
-      const isWebProxy = proxyTag?.[2] == "web";
-
-      const doc = new DOMParser().parseFromString(
-        isWebProxy ? await (await fetch(proxyTag[1])).text() : event.content,
-        "text/html"
-      );
-      isWebProxy
-        ? convertUrlsToProxyUrl(doc, proxyTag[1])
-        : await convertNip21sToResource(doc);
+      const doc = new DOMParser().parseFromString(event.content, "text/html");
+      await convertNip21sToResource(doc);
       return unescapeXML(new XMLSerializer().serializeToString(doc));
     };
 
